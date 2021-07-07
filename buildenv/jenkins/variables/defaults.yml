@@ -279,6 +279,8 @@ s390x_linux:
     build: 'ci.role.build && hw.arch.s390x && sw.os.rhel.7'
   build_env:
     cmd: 'source /home/jenkins/set_gcc7.5.0_env'
+  extra_configure_options:
+    all: '--with-launcher-name=peter --with-product-name=Peter'
   excluded_tests:
     8:
       - special.system
