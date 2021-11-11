@@ -1112,6 +1112,7 @@ typedef struct J9SharedClassJavacoreDataDescriptor {
 	UDATA numObjects;
 	UDATA numStartupHints;
 	UDATA startupHintBytes;
+	UDATA nattach;
 } J9SharedClassJavacoreDataDescriptor;
 
 typedef struct J9SharedStringFarm {

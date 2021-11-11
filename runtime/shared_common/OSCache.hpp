@@ -33,7 +33,7 @@
 #define J9SH_OSCACHE_OPEXIST_DESTROY	0x2
 #define J9SH_OSCACHE_OPEXIST_STATS		0x4
 #define J9SH_OSCACHE_OPEXIST_DO_NOT_CREATE	0x8
-#define J9SH_OSCACHE_UNKNOWN -1
+#define J9SH_OSCACHE_UNKNOWN (~(UDATA)0)
 
 /* 
  * The different results from attempting to open/create a cache are
@@ -104,7 +104,7 @@ typedef struct SH_OSCache_Info {
         I_64 lastattach; /** time from which last attach has happened */
         I_64 lastdetach; /** time from which last detach has happened */
         I_64 createtime; /** time from which cache has been created */
-        IDATA nattach; /** number of process attached to this region */
+        UDATA nattach; /** number of process attached to this region */
         J9PortShcVersion versionData; /** Cache version data */
         UDATA generation; /** cache generation number */
         UDATA isCompatible; /** Is the cache compatible with this VM */
