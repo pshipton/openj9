@@ -36,7 +36,7 @@ public class SharedClassStatistics {
 	public static long maxSizeBytes() {
 		return maxSizeBytesImpl();
 	}
-	
+
 	/**
 	 * Returns the free space of the shared cache that the JVM is currently connected to
 	 * <p>
@@ -45,69 +45,85 @@ public class SharedClassStatistics {
 	public static long freeSpaceBytes() {
 		return freeSpaceBytesImpl();
 	}
-	
+
 	/**
 	 * Returns the soft limit in bytes for the available space of the cache that the JVM is currently connected to
 	 * <p>
-	 * 
+	 *
 	 * @return the soft max size or cache size in bytes if it is not set.
 	 */
 	public static long softmxBytes() {
 		return softmxBytesImpl();
 	}
-	
+
 	/**
-     * Returns the minimum space reserved for AOT data of the cache that the JVM is currently
-     * connected to.
-     * 
-     * @return the minimum shared classes cache space reserved for AOT data in bytes or -1 if it is not set.
-     */
-    public static long minAotBytes() {
-    	return minAotBytesImpl();
-    }
-    
-    /**
-     * Returns the maximum space allowed for AOT data of the cache that the JVM is currently
-     * connected to.
-     * 
-     * @return the maximum shared classes cache space allowed for AOT data in bytes or -1 if it is not set.
-     */
-    public static long maxAotBytes() {
-    	return maxAotBytesImpl();
-    }
-    
-    /**
-     * Returns the minimum space reserved for JIT data of the cache that the JVM is currently
-     * connected to.
-     * 
-     * @return the minimum shared classes cache space reserved for JIT data in bytes or -1 if it is not set.
-     */
-    public static long minJitDataBytes() {
-    	return minJitDataBytesImpl();
-    }
-    
-    /**
-     * Returns the maximum space allowed for JIT data of the cache that the JVM is currently
-     * connected to.
-     * 
-     * @return the maximum shared classes cache space allowed for JIT data in bytes  or -1 if it is not set.
-     */
-    public static long maxJitDataBytes() {
-    	return maxJitDataBytesImpl();
-    }
+	 * Returns the minimum space reserved for AOT data of the cache that the JVM is currently
+	 * connected to.
+	 *
+	 * @return the minimum shared classes cache space reserved for AOT data in bytes or -1 if it is not set.
+	 */
+	public static long minAotBytes() {
+		return minAotBytesImpl();
+	}
 
-	
-	private static native long maxSizeBytesImpl();
+	/**
+	 * Returns the maximum space allowed for AOT data of the cache that the JVM is currently
+	 * connected to.
+	 *
+	 * @return the maximum shared classes cache space allowed for AOT data in bytes or -1 if it is not set.
+	 */
+	public static long maxAotBytes() {
+		return maxAotBytesImpl();
+	}
 
+	/**
+	 * Returns the minimum space reserved for JIT data of the cache that the JVM is currently
+	 * connected to.
+	 *
+	 * @return the minimum shared classes cache space reserved for JIT data in bytes or -1 if it is not set.
+	 */
+	public static long minJitDataBytes() {
+		return minJitDataBytesImpl();
+	}
+
+	/**
+	 * Returns the maximum space allowed for JIT data of the cache that the JVM is currently
+	 * connected to.
+	 *
+	 * @return the maximum shared classes cache space allowed for JIT data in bytes  or -1 if it is not set.
+	 */
+	public static long maxJitDataBytes() {
+		return maxJitDataBytesImpl();
+	}
+
+	/**
+	 * Returns the SysV shmem nattch value for a non-persistent top level cache.
+	 * On Windows or for persistent caches, -1 is returned. Depending on the platform
+	 * and OS, the value may or may not indicate the number of JVMs attached to the cache.
+	 *
+	 * @return the SysV shmem nattch value for a top level non-persistent cache, or -1 if it cannot be determined.
+	 */
+	public static long numberAttached() {
+		return numberAttachedImpl();
+	}
+
+	/**
+	 * Returns the full cache path.
+	 *
+	 * @return the full cache path, or NULL if it cannot be determined.
+	 */
+	public static String cachePath() {
+		return cachePathImpl();
+	}
+
+	private static native String cachePathImpl();
 	private static native long freeSpaceBytesImpl();
-	
+	private static native long maxAotBytesImpl();
+	private static native long maxJitDataBytesImpl();
+	private static native long maxSizeBytesImpl();
+	private static native long minAotBytesImpl();
+	private static native long minJitDataBytesImpl();
+	private static native long numberAttachedImpl();
 	private static native long softmxBytesImpl();
 	
-	private static native long minAotBytesImpl();
-	
-	private static native long maxAotBytesImpl();
-	
-	private static native long minJitDataBytesImpl();
-	
-	private static native long maxJitDataBytesImpl();
 }
