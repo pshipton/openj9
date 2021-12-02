@@ -3056,7 +3056,7 @@ fail:
 			 *                + J9ClassHasIdentity (inherited)
 			 *
 			 *              + J9ClassEnsureHashed (inherited)
-			 *             + Unused
+			 *             + J9ClassHasOffloadAllowSubtasksNatives
 			 *            + Unused
 			 *           + Unused
 			 *
