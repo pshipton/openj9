@@ -23,6 +23,8 @@ package com.ibm.oti.shared;
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
+import java.io.File;
+
 /**
  * SharedClassStatistics provides static functions that report basic cache statistics.
  */
@@ -114,6 +116,47 @@ public class SharedClassStatistics {
 	 */
 	public static String cachePath() {
 		return cachePathImpl();
+	}
+	
+	/**
+	 * Returns the cache name.
+	 * 
+	 * @return the cache name, or NULL if it cannot be determined.
+	 */
+	public static String cacheName() {
+		String cachePath = cachePathImpl();
+		if (null != cachePath) {
+			File f = new File(cachePath);
+			String fileName = f.getName();
+			int prefixIndex = fileName.indexOf('_');
+			int tailIndex = fileName.lastIndexOf('_');
+			if ((prefixIndex > -1) && (tailIndex > -1)) {
+				String prefix = fileName.substring(0, prefixIndex);
+				String cacheName = fileName.substring(prefixIndex + 1, tailIndex);
+				if (!prefix.endsWith("P")) {
+					int typeIndex = cacheName.indexOf('_');
+					if (typeIndex > -1) {
+						cacheName = cacheName.substring(typeIndex + 1);
+					}
+				}
+				return cacheName;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the cache dir.
+	 * 
+	 * @return the cache dir, or NULL if it cannot be determined.
+	 */
+	public static String cacheDir() {
+		String cachePath = cachePathImpl();
+		if (null != cachePath) {
+			File f = new File(cachePath);
+			return f.getParent();
+		}
+		return null;
 	}
 
 	private static native String cachePathImpl();
