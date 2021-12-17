@@ -3108,6 +3108,12 @@ JavaCoreDumpWriter::writeSharedClassSectionTopLayerStatsHelper(J9SharedClassJava
 	);
 	_OutputStream.writeInteger(javacoreData->debugAreaLocalVariableTableBytes, "%zu");
 	_OutputStream.writeCharacters("\n");
+
+	_OutputStream.writeCharacters(
+			"\n2SCLTEXTONA            OS Number Attached (nattach)              = "
+	);
+	_OutputStream.writeInteger(javacoreData->nattach, "%zd");
+	_OutputStream.writeCharacters("\n");
 }
 
 void

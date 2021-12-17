@@ -101,7 +101,7 @@ public class SharedClassStatistics {
 	/**
 	 * Returns the SysV shmem nattch value for a non-persistent top level cache.
 	 * On Windows or for persistent caches, -1 is returned. Depending on the platform
-	 * and OS, the value may or may not indicate the number of JVMs attached to the cache.
+	 * and OS, such as z/OS, the value indicates the number of JVMs attached to the cache.
 	 *
 	 * @return the SysV shmem nattch value for a top level non-persistent cache, or -1 if it cannot be determined.
 	 */
