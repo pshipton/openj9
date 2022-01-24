@@ -42,7 +42,7 @@
 			(Luckily the ant manual gives the java task you need to launch ant:
 			http://ant.apache.org/manual/running.html#viajava )
 		-->
-		
+
 		<java jvm="${test.java.home}/bin/java"
 			classname="org.apache.tools.ant.launch.Launcher"
 			fork="true"
@@ -54,7 +54,7 @@
 				<pathelement location="${ant.home}/lib/ant-launcher.jar"/>
 			</classpath>
 			<jvmarg value="-showversion"/>
-			<jvmarg value="-Xmx512M"/>
+			<jvmarg value="-Xmx128M"/>
 			<arg value="-buildfile"/>
 			<arg file="${ant.file}"/>
 			<arg value="test"/>
@@ -66,7 +66,7 @@
 		<echo message="Running com.ibm.jvm.ras.tests.DumpAPIBasicTests"/>
 		<junit fork="yes" showoutput="true" haltonfailure="true">
 			<jvmarg value="-showversion"/>
-			<jvmarg value="-Xmx512M"/>
+			<jvmarg value="-Xmx1200M"/>
 			<classpath>
 				<pathelement location="junit4.jar"/>
 				<pathelement location="com.ibm.jvm.ras.tests.jar"/>
@@ -77,7 +77,7 @@
 		<echo message="Running com.ibm.jvm.ras.tests.DumpAPITriggerTests"/>
 		<junit fork="yes" showoutput="true" haltonfailure="true">
 			<jvmarg value="-showversion"/>
-			<jvmarg value="-Xmx512M"/>
+			<jvmarg value="-Xmx1200M"/>
 			<classpath>
 				<pathelement location="junit4.jar"/>
 				<pathelement location="com.ibm.jvm.ras.tests.jar"/>

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (c) 2020, 2021 IBM Corp. and others
+  Copyright (c) 2020, 2022 IBM Corp. and others
 
   This program and the accompanying materials are made available under
   the terms of the Eclipse Public License 2.0 which accompanies this
@@ -34,7 +34,7 @@
 			</disable>
 		</disables>
 		<command>
-			ant -f $(TEST_RESROOT)$(D)test.xml -Dtest.java.home=$(Q)$(TEST_JDK_HOME)$(D)$(Q) launch_test; \
+			ant -f $(TEST_RESROOT)$(D)test.xml -Dbasedir=$(REPORTDIR) -Dtest.java.home=$(Q)$(TEST_JDK_HOME)$(D)$(Q) launch_test; \
 		$(TEST_STATUS)</command>
 		<levels>
 			<level>extended</level>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2021 IBM Corp. and others
+ * Copyright (c) 2016, 2022 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -39,21 +39,21 @@ import com.ibm.jvm.InvalidDumpOptionException;
 import com.ibm.jvm.ras.tests.DumpAPISuite.DumpType;
 
 public class DumpAPITriggerTests extends TestCase {
-	
+
 	private long uid = System.currentTimeMillis();
-	
+
 	// Record the files created by each testcase here so we can delete them
 	// later. Otherwise we will fill the disk up pretty quickly. While we check
 	// that the right kind of dump was created for each call we do any further
 	// validity checking on the dumps themselves. This test is just checking the
 	// API does what it should not that the dumps themselves are correct.
 	private Set<String> fileNames;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fileNames = new HashSet<String>();
-		
+
 		// This isn't to free space, it's to trigger GC tracepoints so we don't get empty snap dumps!
 		System.gc();
 	}
@@ -62,11 +62,11 @@ public class DumpAPITriggerTests extends TestCase {
 	protected void tearDown() throws Exception {
 		// TODO Auto-generated method stub
 		super.tearDown();
-		for( String fileName: fileNames) { 
+		for( String fileName: fileNames) {
 			deleteFile(fileName, this.getName());
 		}
 	}
-	
+
 	public void testTriggerDumpNullOpts() {
 		try {
 			doTestTriggerBadDumpX(null);
@@ -75,15 +75,15 @@ public class DumpAPITriggerTests extends TestCase {
 			// pass
 		}
 	}
-	
+
 	public void testTriggerDumpEmptyOpts() {
 		doTestTriggerBadDumpX("");
 	}
-	
+
 	public void testTriggerDumpJavaNoOpts() {
 		doTestTriggerDumpNoOpts("java", DumpType.JAVA_TYPE);
 	}
-	
+
 	public void testTriggerDumpSystemNoOpts() {
 		if( isZOS() ) {
 			System.err.printf("Skipping %s, z/OS system dumps currently inaccessable in Java 8, see CMVC 193090\n", this.getName());
@@ -91,21 +91,21 @@ public class DumpAPITriggerTests extends TestCase {
 		}
 		doTestTriggerDumpNoOpts("system", DumpType.SYSTEM_TYPE);
 	}
-	
+
 	public void testTriggerDumpHeapNoOpts() {
 		doTestTriggerDumpNoOpts("heap", DumpType.PHD_HEAP_TYPE);
 	}
-	
+
 	public void testTriggerDumpSnapNoOpts() {
 		doTestTriggerDumpNoOpts("snap", DumpType.SNAP_TYPE);
 	}
-	
+
 //	Don't test this, the default dump agent runs the debugger and connects back to this process.
 //  It's a great way to hang the test cases.
 //	public void testTriggerDumpToolNoOpts() {
 //		doTestTriggerDumpNoOpts("snap", DumpType.TOOL_TYPE);
 //	}
-	
+
 	public void testTriggerDumpConsoleNoOpts() {
 		// Default console dump goes to stderr therefore no file will be found.
 		doTestTriggerDumpNoOpts("console", DumpType.FILE_NOT_FOUND);
@@ -115,21 +115,21 @@ public class DumpAPITriggerTests extends TestCase {
 		// Default stack dump goes to stderr therefore no file will be found.
 		doTestTriggerDumpNoOpts("stack", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpSilentNoOpts() {
 		doTestTriggerDumpNoOpts("silent", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpBadAgentNoOpts() {
 		// The chances of us adding a new dump type called walrus in the future are small.
 		InvalidDumpOptionException e = doTestTriggerBadDumpX("walrus");
 		assertEquals("Incorrect message triggering tool dump.", DUMP_ERROR_PARSING, e.getMessage());
 	}
-	
+
 	public void testTriggerDumpJavaToFile() {
 		doTestTriggerDumpWithFile("java", "javacore." + getName() + "." + uid + ".txt", DumpType.JAVA_TYPE);
 	}
-	
+
 	public void testTriggerDumpSystemToFile() {
 		if( isZOS() ) {
 			System.err.printf("Skipping %s, z/OS system dumps currently inaccessable in Java 8, see CMVC 193090\n", this.getName());
@@ -137,11 +137,11 @@ public class DumpAPITriggerTests extends TestCase {
 		}
 		doTestTriggerDumpWithFile("system", "system." + getName() + "." + uid + ".dmp", DumpType.SYSTEM_TYPE);
 	}
-	
+
 	public void testTriggerDumpHeapToFile() {
 		doTestTriggerDumpWithFile("heap", "heap." + getName() + "." + uid + ".phd", DumpType.PHD_HEAP_TYPE);
 	}
-	
+
 	public void testTriggerDumpClassicHeapToFile() {
 		String fileName = "heap." + getName() + "." + uid + ".txt";
 		String type = "heap";
@@ -150,18 +150,18 @@ public class DumpAPITriggerTests extends TestCase {
 		doTestTriggerDumpX(type +":file=" + fileName + ",opts=CLASSIC", DumpType.CLASSIC_HEAP_TYPE);
 		assertTrue("Failed to find file " + fileName + " after requesting " + fileName, dumpFile.exists());
 	}
-	
-	
+
+
 	public void testTriggerDumpSnapToFile() {
 		doTestTriggerDumpWithFile("snap", "snap." + getName() + "." + uid + ".trc", DumpType.SNAP_TYPE);
 	}
-	
+
 	public void testTriggerDumpTool() {
 		// This will be slightly broken as no file will be created but as we don't get the return code
 		// from the command we just want to check the string is accepted and we attempt to run something.
 		doTestTriggerDumpX("tool:exec=tool." + getName() + "." + uid + ".txt", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpConsoleToFile() {
 		doTestTriggerDumpWithFile("console", "console." + getName() + "." + uid + ".txt", DumpType.CONSOLE_TYPE);
 	}
@@ -169,16 +169,16 @@ public class DumpAPITriggerTests extends TestCase {
 	public void testTriggerDumpStackToFile() {
 		doTestTriggerDumpWithFile("stack", "stack." + getName() + "." + uid + ".txt", DumpType.STACK_TYPE);
 	}
-	
+
 	public void testTriggerDumpSilentToFile() {
 		doTestTriggerDumpWithFile("silent", "silent." + getName() + "." + uid + ".txt", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpBadAgentToFile() {
 		InvalidDumpOptionException e = doTestTriggerBadDumpX("walrus:label=walrus." + getName() + "." + uid + ".txt");
 		assertEquals("Incorrect message triggering tool dump.", DUMP_ERROR_PARSING, e.getMessage());
 	}
-	
+
 	public void testTriggerDumpJavaNoFile() {
 		InvalidDumpOptionException e = doTestTriggerBadDumpX("java:file=");
 		assertEquals("Incorrect message triggering java dump with missing file.", DUMP_COULD_NOT_CREATE_FILE, e.getMessage());
@@ -222,19 +222,19 @@ public class DumpAPITriggerTests extends TestCase {
 		InvalidDumpOptionException e = doTestTriggerBadDumpX("java:file=javaDump" + File.separator);
 		assertEquals("Incorrect message triggering java dump with missing file.", DUMP_COULD_NOT_CREATE_FILE, e.getMessage());
 	}
-	
+
 	public void testTriggerDumpConsoleDashFile() {
 		doTestTriggerDumpWithFile("console", "-", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpStackDashFile() {
 		doTestTriggerDumpWithFile("stack", "-", DumpType.FILE_NOT_FOUND);
 	}
-	
+
 	public void testTriggerDumpJavaDashFile() {
 		doSTDOUTTestTriggerDumpX("java:file=-");
 	}
-	
+
 	public void testTriggerMultipleDumpsNoOpts() {
 		InvalidDumpOptionException e = doTestTriggerBadDumpX("java+heap");
 		assertEquals("Incorrect message triggering java dump with missing file.", DUMP_ERROR_PARSING, e.getMessage());
@@ -244,11 +244,11 @@ public class DumpAPITriggerTests extends TestCase {
 	/*public void testTriggerDumpJit() {
 		doTestTriggerDump("jit");
 	}*/
-	
+
 	public void doTestTriggerDumpNoOpts(String type, DumpType expectedType) {
 		doTestTriggerDumpX(type, expectedType);
 	}
-	
+
 
 	/**
 	 * Triggers a dump to a specific file name and checks it exists.
@@ -261,7 +261,7 @@ public class DumpAPITriggerTests extends TestCase {
 		assertFalse("Found file " + fileName + " before requesting " + fileName, dumpFile.exists());
 		doTestTriggerDumpX(type +":label=" + fileName, expectedType);
 	}
-		
+
 	/**
 	 * Triggers a dump with the given options and does basic checking
 	 * for files created and created with the right name.
@@ -270,11 +270,11 @@ public class DumpAPITriggerTests extends TestCase {
 	public void doTestTriggerDumpX(String options, DumpType expectedType) {
 		String userDir = System.getProperty("user.dir");
 		String dumpFilePattern = ".*\\.*";
-		
+
 		/* Count the number of files before and after. Should increase by one. */
 		String[] beforeFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int beforeCount = beforeFileNames.length;
-		
+
 		String fileName = null;
 		try {
 			fileName = com.ibm.jvm.Dump.triggerDump(options);
@@ -287,17 +287,16 @@ public class DumpAPITriggerTests extends TestCase {
 		}
 		//System.err.println("Dump file name is: " + fileName);
 		assertNotNull("Expected triggerDump to return file name, not null", fileName);
-		
+
 		// Check the generated file really exists, unless we wrote to stderr or don't expect to find a file!
 		File dumpFile = new File(fileName);
 		if( !"-".equals(fileName) && expectedType != DumpType.FILE_NOT_FOUND ) {
 			assertTrue("Failed to find files " + fileName + " after requesting " + fileName, dumpFile.exists());
-			fileNames.add(fileName);
 		}
 		// Check content
 		DumpType type = getContentType(dumpFile);
 		assertEquals("Expected file " + dumpFile + " to contain a dump of type " + expectedType.name + " but content type was: " + type.name, expectedType, type);
-		
+
 		// Check the number of files has increased. (We weren't returned a filename that already existed.)
 		String[] afterFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int afterCount = afterFileNames.length;
@@ -308,19 +307,21 @@ public class DumpAPITriggerTests extends TestCase {
 			// Wrote to filename, one more file.
 			assertEquals("Failed to find expected number of files in " + userDir + " , found:" + Arrays.toString(afterFileNames), beforeCount + 1, afterCount);
 		}
-		
+
+		/* For diagnostics, only remove the file if the test passes. */
+		fileNames.add(fileName);
 	}
 
 	public void doSTDOUTTestTriggerDumpX(String options) {
 		String userDir = System.getProperty("user.dir");
 		String dumpFilePattern = ".*\\.*";
-		
+
 		/* Count the number of files before and after. Should increase by one. */
 		String[] beforeFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int beforeCount = beforeFileNames.length;
-		
+
 		String fileName = null;
-		
+
 		try {
 			fileName = com.ibm.jvm.Dump.triggerDump(options);
 			assertEquals("Expected fileName /STDOUT/, but fileName was " + fileName, "/STDOUT/", fileName);
@@ -328,14 +329,14 @@ public class DumpAPITriggerTests extends TestCase {
 			e.printStackTrace();
 			fail("Unexpected InvalidDumpOption exception thrown.");
 		}
-		
+
 		// Check the number of files has not increased. (We weren't returned a filename that already existed.)
 		String[] afterFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int afterCount = afterFileNames.length;
 		// Should have failed to create a dump, so no more files should be created.
 		assertEquals("Failed to find expected number of files in " + userDir + " , found:" + Arrays.toString(afterFileNames), beforeCount, afterCount);
 	}
-	
+
 	/**
 	 * Triggers a dump with the given options, which are incorrect,
 	 * and checks no files are created.
@@ -345,14 +346,14 @@ public class DumpAPITriggerTests extends TestCase {
 	public InvalidDumpOptionException doTestTriggerBadDumpX(String options) {
 		String userDir = System.getProperty("user.dir");
 		String dumpFilePattern = ".*\\.*";
-		
+
 		/* Count the number of files before and after. Should increase by one. */
 		String[] beforeFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int beforeCount = beforeFileNames.length;
-		
+
 		String fileName = null;
 		InvalidDumpOptionException exception = null;
-		
+
 		/* We are checking these options cause an error, so the InvalidDumpOptionException path is the good case. */
 		try {
 			fileName = com.ibm.jvm.Dump.triggerDump(options);
@@ -363,7 +364,7 @@ public class DumpAPITriggerTests extends TestCase {
 			exception = e;
 		}
 		assertNull("Expected triggerDump not to return null file name", fileName);
-		
+
 		// Check the number of files has increased. (We weren't returned a filename that already existed.)
 		String[] afterFileNames = getFilesByPattern(userDir, dumpFilePattern);
 		int afterCount = afterFileNames.length;
@@ -371,5 +372,5 @@ public class DumpAPITriggerTests extends TestCase {
 		assertEquals("Failed to find expected number of files in " + userDir + " , found:" + Arrays.toString(afterFileNames), beforeCount, afterCount);
 		return exception;
 	}
-	
+
 }
