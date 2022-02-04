@@ -1505,6 +1505,39 @@
 		</impls>
 	</test>
 	<test>
+		<testCaseName>JCL_TEST_Java-Security_SM</testCaseName>
+		<variations>
+			<variation>NoOptions</variation>
+		</variations>
+		<command>$(JAVA_COMMAND) $(JAVA_SECURITY_MANAGER) $(JVM_OPTIONS) -verbose:stacktrace \
+	--add-modules openj9.sharedclasses $(ADD_MODULE_JAVA_SE_EE) \
+	--add-exports java.base/com.ibm.oti.util=ALL-UNNAMED \
+	--add-opens=java.base/java.lang=ALL-UNNAMED \
+	--add-opens=java.base/java.security=ALL-UNNAMED \
+	-Djava.security.policy=$(Q)$(TEST_RESROOT)$(D)testacc.policy$(Q) \
+	-Xbootclasspath/a:$(TEST_RESROOT)$(D)TestResources.jar \
+	-cp $(Q)$(RESOURCES_DIR)$(P)$(TESTNG)$(P)$(TEST_RESROOT)$(D)GeneralTest.jar$(P)$(TEST_RESROOT)$(D)TestResources.jar$(P)$(LIB_DIR)$(D)asm-all.jar$(Q) \
+	org.testng.TestNG -d $(REPORTDIR) $(Q)$(TEST_RESROOT)$(D)testng.xml$(Q) \
+	-testnames JCL_TEST_Java-Security_SM \
+	-groups $(TEST_GROUP) \
+	-excludegroups $(DEFAULT_EXCLUDE); \
+	$(TEST_STATUS)</command>
+		<platformRequirements>^vm.hrt</platformRequirements>
+		<levels>
+			<level>sanity</level>
+		</levels>
+		<groups>
+			<group>functional</group>
+		</groups>
+		<versions>
+			<version>9+</version>
+		</versions>
+		<impls>
+			<impl>openj9</impl>
+			<impl>ibm</impl>
+		</impls>
+	</test>
+	<test>
 		<testCaseName>JCL_Test_JITHelpers_SE80</testCaseName>
 		<command>$(JAVA_COMMAND) $(JVM_OPTIONS) \
 	-Xbootclasspath/a:$(Q)$(TEST_RESROOT)$(D)TestResources.jar$(Q) \
