@@ -264,33 +264,72 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-excepti
 
 				<property name="addExports" value="--add-exports java.base/com.ibm.oti.vm=ALL-UNNAMED --add-exports java.base/com.ibm.oti.util=ALL-UNNAMED --add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED --add-exports java.base/com.ibm.jit.crypto=ALL-UNNAMED --add-exports java.base/com.ibm.jit=ALL-UNNAMED --add-exports java.base/com.ibm.oti.reflect=ALL-UNNAMED --add-exports java.base/openj9.internal.tools.attach.target=ALL-UNNAMED --add-exports jdk.jcmd/openj9.tools.attach.diagnostics.info=ALL-UNNAMED --add-exports jdk.attach/com.ibm.tools.attach.attacher=ALL-UNNAMED" />
 				<echo>===addExports:        ${addExports}</echo>
-				<javac srcdir="${src}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
-					<src path="${src}" />
-					<src path="src_110_up" />
-					<src path="${src_version}" />
-					<src path="${src_90_jcl}" />
-					<src path="${src_access}" />
-					<src path="${TestUtilities}" />
-					<src path="${TestUtilitiesJ9}" />
-					<src path="${transformerListener}" />
-					<compilerarg line='${addExports}' />
-					<compilerarg line='${addExports_90_jcl}' />
-					<compilerarg line='${addExports_version}' />
-					<compilerarg line='--add-modules openj9.sharedclasses' />
-					<!-- PR117298 -->
-					<exclude name="**/Cmvc194280.java" />
-					<exclude name="**/resources/**" />
-					<!-- requires special compilation methods -->
-					<exclude name="**/NoSuchMethod/**" />
-					<classpath>
-						<pathelement location="${LIB_DIR}/asm-all.jar" />
-						<pathelement location="${LIB_DIR}/testng.jar" />
-						<pathelement location="${LIB_DIR}/jcommander.jar" />
-						<pathelement location="${LIB_DIR}/commons-cli.jar" />
-						<pathelement location="${LIB_DIR}/javassist.jar" />
-						<pathelement location="${LIB_DIR}/jaxb-api.jar" />
-					</classpath>
-				</javac>
+				<if>
+					<matches string="${JDK_VERSION}" pattern="^(8|9|(1[0-8]))$$" />
+					<then>
+						<!-- Java 8-18 -->
+						<javac srcdir="${src}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
+							<src path="${src}" />
+							<src path="src_110_up" />
+							<src path="${src_version}" />
+							<src path="${src_90_jcl}" />
+							<src path="${src_access}" />
+							<src path="${TestUtilities}" />
+							<src path="${TestUtilitiesJ9}" />
+							<src path="${transformerListener}" />
+							<compilerarg line='${addExports}' />
+							<compilerarg line='${addExports_90_jcl}' />
+							<compilerarg line='${addExports_version}' />
+							<compilerarg line='--add-modules openj9.sharedclasses' />
+							<!-- PR117298 -->
+							<exclude name="**/Cmvc194280.java" />
+							<exclude name="**/resources/**" />
+							<!-- requires special compilation methods -->
+							<exclude name="**/NoSuchMethod/**" />
+							<classpath>
+								<pathelement location="${LIB_DIR}/asm-all.jar" />
+								<pathelement location="${LIB_DIR}/testng.jar" />
+								<pathelement location="${LIB_DIR}/jcommander.jar" />
+								<pathelement location="${LIB_DIR}/commons-cli.jar" />
+								<pathelement location="${LIB_DIR}/javassist.jar" />
+								<pathelement location="${LIB_DIR}/jaxb-api.jar" />
+							</classpath>
+						</javac>
+					</then>
+					<else>
+						<!-- Java 19+ (SecurityManager removed) -->
+						<javac srcdir="${src}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
+							<src path="${src}" />
+							<src path="src_110_up" />
+							<src path="${src_version}" />
+							<src path="${src_90_jcl}" />
+							<src path="${src_access}" />
+							<src path="${TestUtilities}" />
+							<src path="${TestUtilitiesJ9}" />
+							<src path="${transformerListener}" />
+							<compilerarg line='${addExports}' />
+							<compilerarg line='${addExports_90_jcl}' />
+							<compilerarg line='${addExports_version}' />
+							<compilerarg line='--add-modules openj9.sharedclasses' />
+							<!-- PR117298 -->
+							<exclude name="**/Cmvc194280.java" />
+							<exclude name="**/resources/**" />
+							<!-- requires special compilation methods -->
+							<exclude name="**/NoSuchMethod/**" />
+							<!-- exclude tests that depend on SecurityManager -->
+							<exclude name="org/openj9/test/java/security/Test_AccessController.java" />
+							<exclude name="org/openj9/test/java/security/Test_AccessControlContext.java" />
+							<classpath>
+								<pathelement location="${LIB_DIR}/asm-all.jar" />
+								<pathelement location="${LIB_DIR}/testng.jar" />
+								<pathelement location="${LIB_DIR}/jcommander.jar" />
+								<pathelement location="${LIB_DIR}/commons-cli.jar" />
+								<pathelement location="${LIB_DIR}/javassist.jar" />
+								<pathelement location="${LIB_DIR}/jaxb-api.jar" />
+							</classpath>
+						</javac>
+					</else>
+				</if>
 			</else>
 		</if>
 	</target>
