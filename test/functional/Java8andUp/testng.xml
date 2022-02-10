@@ -204,6 +204,15 @@
 			<class name="org.openj9.test.java.lang.Test_VMAccess"/>
 		</classes>
 	</test>
+	<test name="JCL_TEST_Java-Lang_SM">
+		<!-- Tests that depend on SecurityManager -->
+		<classes>
+			<class name="org.openj9.test.java.lang.Test_Class_SM"/>
+			<class name="org.openj9.test.java.lang.Test_System_SM"/>
+			<class name="org.openj9.test.java.lang.Test_Thread_SM"/>
+			<class name="org.openj9.test.java.lang.Test_ThreadGroup_SM"/>
+		</classes>
+	</test>
 	<test name="JCL_TEST_Java-Lang_OutOfMemoryError">
 		<classes>
 			<class name="org.openj9.test.java.lang.Test_OutOfMemoryError"/>

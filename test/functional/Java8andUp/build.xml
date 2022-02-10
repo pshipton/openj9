@@ -319,6 +319,10 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-excepti
 							<!-- exclude tests that depend on SecurityManager -->
 							<exclude name="org/openj9/test/java/security/Test_AccessController.java" />
 							<exclude name="org/openj9/test/java/security/Test_AccessControlContext.java" />
+							<exclude name="org/openj9/test/java/lang/Test_Class_SM.java" />
+							<exclude name="org/openj9/test/java/lang/Test_System_SM.java" />
+							<exclude name="org/openj9/test/java/lang/Test_Thread_SM.java" />
+							<exclude name="org/openj9/test/java/lang/Test_ThreadGroup_SM.java" />
 							<classpath>
 								<pathelement location="${LIB_DIR}/asm-all.jar" />
 								<pathelement location="${LIB_DIR}/testng.jar" />
