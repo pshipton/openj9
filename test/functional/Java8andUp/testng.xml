@@ -234,6 +234,11 @@
 			<class name="org.openj9.test.java.lang.invoke.Test_MethodHandleInfo"/>
 		</classes>
 	</test>
+	<test name="JCL_TEST_Java-Lang-Invoke_SM">
+		<classes>
+			<class name="org.openj9.test.java.lang.invoke.Test_MethodHandleInfo_SM"/>
+		</classes>
+	</test>
 	<test name="JCL_TEST_Java-Lang-Ref">
 		<classes>
 			<class name="org.openj9.test.java.lang.ref.Test_PhantomReference"/>
