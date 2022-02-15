@@ -1089,7 +1089,8 @@
 	org.testng.TestNG -d $(REPORTDIR) $(Q)$(TEST_RESROOT)$(D)testng.xml$(Q) \
 	-testnames \
 	JCL_TEST_Java-Lang_SM,\
-	JCL_TEST_Java-Lang-Invoke_SM \
+	JCL_TEST_Java-Lang-Invoke_SM,\
+	JCL_TEST_Java-Lang_ClassLoader_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
@@ -1245,7 +1246,8 @@
 	org.testng.TestNG -d $(REPORTDIR) $(Q)$(TEST_RESROOT)$(D)testng.xml$(Q) \
 	-testnames \
 	JCL_TEST_Java-Lang_SM,\
-	JCL_TEST_Java-Lang-Invoke_SM \
+	JCL_TEST_Java-Lang-Invoke_SM,\
+	JCL_TEST_Java-Lang_ClassLoader_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>

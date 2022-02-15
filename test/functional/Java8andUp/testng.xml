@@ -162,6 +162,12 @@
 			<class name="org.openj9.test.java.lang.Test_ClassLoader"/>
 		</classes>
 	</test>
+	<test name="JCL_TEST_Java-Lang_ClassLoader_SM">
+		<!-- Tests that depend on SecurityManager -->
+		<classes>
+			<class name="org.openj9.test.java.lang.Test_ClassLoader_SM"/>
+		</classes>
+	</test>
 	<test name="JCL_TEST_Java-Lang_ClassLoader_Native">
 		<classes>
 			<class name="org.openj9.test.java.lang.Test_ClassLoader_Native"/>
@@ -235,6 +241,7 @@
 		</classes>
 	</test>
 	<test name="JCL_TEST_Java-Lang-Invoke_SM">
+		<!-- Tests that depend on SecurityManager -->
 		<classes>
 			<class name="org.openj9.test.java.lang.invoke.Test_MethodHandleInfo_SM"/>
 		</classes>
