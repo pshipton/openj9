@@ -30,7 +30,7 @@ public class Test_ClassLoader_SM {
 
 	/**
 	 * [PR Jazz103 76960]
-	 * 
+	 *
 	 * @tests java.lang.ClassLoader#getParent() Test the case when in
 	 *        getParent() the callerClassLoader is same as child of this
 	 *        classloader. getParent() should throw SecurityException in such
@@ -55,7 +55,7 @@ public class Test_ClassLoader_SM {
 
 	/**
 	 * [PR Jazz103 76960]
-	 * 
+	 *
 	 * @tests java.lang.ClassLoader#getParent() Test the case when in
 	 *        getParent() the callerClassLoader is same as this classloader.
 	 *        getParent() should throw SecurityException in such case.

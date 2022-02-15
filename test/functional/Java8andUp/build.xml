@@ -327,6 +327,7 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-excepti
 							<exclude name="org/openj9/test/java/lang/Test_ClassLoader_SM.java" />
 							<exclude name="org/openj9/test/java/lang/Test_J9VMInternals.java" />
 							<exclude name="org/openj9/test/java/lang/Test_J9VMInternalsImpl.java" />
+							<exclude name="org/openj9/test/vm/Test_VM.java" />
 							<classpath>
 								<pathelement location="${LIB_DIR}/asm-all.jar" />
 								<pathelement location="${LIB_DIR}/testng.jar" />

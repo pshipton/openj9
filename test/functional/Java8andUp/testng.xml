@@ -284,6 +284,11 @@
 	<test name="JCL_TEST_IBM-VM">
 		<classes>
 			<class name="org.openj9.test.vm.Test_MsgHelp"/>
+		</classes>
+	</test>
+	<test name="JCL_TEST_IBM-VM_SM">
+		<!-- Tests that depend on SecurityManager -->
+		<classes>
 			<class name="org.openj9.test.vm.Test_VM"/>
 		</classes>
 	</test>

@@ -1090,7 +1090,8 @@
 	-testnames \
 	JCL_TEST_Java-Lang_SM,\
 	JCL_TEST_Java-Lang-Invoke_SM,\
-	JCL_TEST_Java-Lang_ClassLoader_SM \
+	JCL_TEST_Java-Lang_ClassLoader_SM,\
+	JCL_TEST_IBM-VM_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
@@ -1247,7 +1248,8 @@
 	-testnames \
 	JCL_TEST_Java-Lang_SM,\
 	JCL_TEST_Java-Lang-Invoke_SM,\
-	JCL_TEST_Java-Lang_ClassLoader_SM \
+	JCL_TEST_Java-Lang_ClassLoader_SM,\
+	JCL_TEST_IBM-VM_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
