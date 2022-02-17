@@ -229,6 +229,12 @@
 			<class name="org.openj9.test.java.lang.Test_J9VMInternals"/>
 		</classes>
 	</test>
+	<test name="JCL_TEST_Java-Internals_SM">
+		<!-- Tests that depend on SecurityManager -->
+		<classes>
+			<class name="org.openj9.test.java.lang.Test_J9VMInternals_SM"/>
+		</classes>
+	</test>
 	<test name="JCL_TEST_Java-Lang-Package">
 		<classes>
 			<class name="org.openj9.test.java.lang.Test_Package"/>
