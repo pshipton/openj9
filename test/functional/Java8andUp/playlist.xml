@@ -1095,7 +1095,6 @@
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
-		<platformRequirements>^vm.hrt</platformRequirements>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -1103,18 +1102,10 @@
 			<group>functional</group>
 		</groups>
 		<versions>
-			<version>9</version>
-			<version>10</version>
 			<version>11</version>
-			<version>12</version>
-			<version>13</version>
-			<version>14</version>
-			<version>15</version>
-			<version>16</version>
 			<version>17</version>
 			<version>18</version>
 		</versions>
-		<aot>nonapplicable</aot>
 		<impls>
 			<impl>openj9</impl>
 			<impl>ibm</impl>
@@ -1253,7 +1244,6 @@
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
-		<platformRequirements>^vm.hrt</platformRequirements>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -1261,18 +1251,10 @@
 			<group>functional</group>
 		</groups>
 		<versions>
-			<version>9</version>
-			<version>10</version>
 			<version>11</version>
-			<version>12</version>
-			<version>13</version>
-			<version>14</version>
-			<version>15</version>
-			<version>16</version>
 			<version>17</version>
 			<version>18</version>
 		</versions>
-		<aot>nonapplicable</aot>
 		<impls>
 			<impl>openj9</impl>
 			<impl>ibm</impl>
@@ -1492,7 +1474,6 @@
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
-		<platformRequirements>^vm.hrt</platformRequirements>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -1500,14 +1481,7 @@
 			<group>functional</group>
 		</groups>
 		<versions>
-			<version>9</version>
-			<version>10</version>
 			<version>11</version>
-			<version>12</version>
-			<version>13</version>
-			<version>14</version>
-			<version>15</version>
-			<version>16</version>
 			<version>17</version>
 			<version>18</version>
 		</versions>
@@ -1672,7 +1646,6 @@
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
-		<platformRequirements>^vm.hrt</platformRequirements>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -1680,14 +1653,7 @@
 			<group>functional</group>
 		</groups>
 		<versions>
-			<version>9</version>
-			<version>10</version>
 			<version>11</version>
-			<version>12</version>
-			<version>13</version>
-			<version>14</version>
-			<version>15</version>
-			<version>16</version>
 			<version>17</version>
 			<version>18</version>
 		</versions>
