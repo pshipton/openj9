@@ -269,9 +269,9 @@ scarInit(J9JavaVM * vm)
 
 #ifdef J9VM_OPT_JAVA_OFFLOAD_SUPPORT
 	if (0 != ((J9NativeLibrary*)handle)->doSwitching) {
-		Assert_JCL_Natives_Not_Offloaded();
+//		Assert_JCL_Natives_Not_Offloaded();
 		/* Trace engine may not be running at this point, refuse to load */
-		return 1;
+//		return 1;
 	}
 #endif
 
