@@ -23,21 +23,23 @@
 import java.util.*;
 import java.io.*;
 import java.nio.charset.Charset;
+import org.openj9.test.util.VersionCheck;
 
-public class SysPropTest 
+public class SysPropTest
 {
-	/* TestVa&#187;lue&#161; */	
-	static final byte[] B = { (byte)0x54, (byte)0x65, (byte)0x73, (byte)0x74,  (byte)0x56, (byte)0x61,(byte) 187, (byte)0x6C, (byte)0x75, (byte)0x65, (byte) 161};	
+	/* TestVa&#187;lue&#161; */
+	static final byte[] B = { (byte)'T', (byte)'e', (byte)'s', (byte)'t', (byte)'V', (byte)'a', (byte)187, (byte)'l', (byte)'u', (byte)'e', (byte)161};
+	static final byte[] Butf8 = { (byte)'T', (byte)'e', (byte)'s', (byte)'t', (byte)'V', (byte)'a', (byte)0xC2, (byte)187, (byte)'l', (byte)'u', (byte)'e', (byte)0xC2, (byte)161};
 
 	public static void main(String args[])
 	{
 		boolean isWindows = false;
 		if ( args.length == 0) {
-			System.out.println("test failed"); 
+			System.out.println("test failed");
 			return;
 		}
 		String argEncoding = args[0];
-		/* check -Dtestkey=Test?Va?lue?  */
+		/* check -Dtestkey=TestVa?lue?  */
 		try {
 			String osEncoding = "";
 			String strTestProp;
@@ -45,28 +47,36 @@ public class SysPropTest
 				isWindows = true;
 			}
 
+			/* On jdk18+ with JEP 400 UTF-8 by default, the non-ascii characters in the testkey property
+			 * are converted to UTF8 by the test (not the JVM).
+			 */
+			final byte[] expectedB = ((VersionCheck.major() >= 18) && !isWindows) ? Butf8 : B;
+
 			if (argEncoding.equals("DEFAULT")) {
 				osEncoding = System.getProperty("os.encoding");
 			}
 
 			/* Windows converts from the platform default to UTF8 internally to the VM and
-			   sets os.encoding to UTF8. To replicate this behavior, on Windows use the default encoding
-			   and not the os.encoding. */
-			if (osEncoding != null && osEncoding.length() != 0 && isWindows == false) {  
-				strTestProp = new String(B,osEncoding);
+			 * sets os.encoding to UTF8. To replicate this behavior, on Windows use the default encoding
+			 * and not the os.encoding.
+			 */
+			if (osEncoding != null && osEncoding.length() != 0 && isWindows == false) {
+				strTestProp = new String(expectedB, osEncoding);
 			} else {
 				if ((argEncoding.equals("UTF-8") || argEncoding.equals("ISO-8859-1"))) {
-					strTestProp = new String(B,argEncoding);
+					strTestProp = new String(expectedB, argEncoding);
 				} else {
-					strTestProp = new String(B, System.getProperty("native.encoding", Charset.defaultCharset().name()));
+					strTestProp = new String(expectedB, System.getProperty("native.encoding", Charset.defaultCharset().name()));
 				}
 			}
-			
-			String strProp = System.getProperty("testkey"); 
+
+			String strProp = System.getProperty("testkey");
 			if (strProp == null || strTestProp.compareTo(strProp) != 0) {
-				System.out.println("test failed"); 
-				System.out.println("os.encoding: " + System.getProperty("os.encoding"));	
-				System.out.println("file.encoding: " + System.getProperty("file.encoding"));				
+				System.out.println("test failed");
+				System.out.println("os.encoding: " + System.getProperty("os.encoding"));
+				System.out.println("native.encoding: " + System.getProperty("native.encoding"));
+				System.out.println("defaultCharset(): " + Charset.defaultCharset().name());
+				System.out.println("file.encoding: " + System.getProperty("file.encoding"));
 				System.out.print("strProp    : ");
 				for (int i=0; i < strProp.length(); i++) {
 					System.out.print(Integer.toHexString(strProp.charAt(i)) + " ");
@@ -76,13 +86,13 @@ public class SysPropTest
 				for (int i=0; i < strTestProp.length(); i++) {
 					System.out.print(Integer.toHexString(strTestProp.charAt(i)) + " ");
 				}
-				System.out.println();				
-				
+				System.out.println();
+
 			} else {
-				System.out.println("test succeeded"); 
+				System.out.println("test succeeded");
 			}
 		} catch(UnsupportedEncodingException e) {
-			System.out.println("test failed"); 
+			System.out.println("test failed");
 			e.printStackTrace();
 		}
 	}
