@@ -275,15 +275,13 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-excepti
 					<fileset dir="${LIB_DIR}/" includes="javassist.jar"/>
 					<fileset dir="${LIB_DIR}/" includes="jaxb-api.jar"/>
 				</path>
+				<property name="commonArgs" value="${addExports} ${addExports_90_jcl} ${addExports_version} --add-modules openj9.sharedclasses" />
 				<if>
 					<matches string="${JDK_VERSION}" pattern="^(1[1-8])$$" />
 					<then>
 						<!-- Java 11-18 -->
 						<javac srcdir="${srcpath}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1" classpathref="build.cp">
-							<compilerarg line='${addExports}' />
-							<compilerarg line='${addExports_90_jcl}' />
-							<compilerarg line='${addExports_version}' />
-							<compilerarg line='--add-modules openj9.sharedclasses' />
+							<compilerarg line='${commonArgs}' />
 							<!-- PR117298 -->
 							<exclude name="**/Cmvc194280.java" />
 							<exclude name="**/resources/**" />
@@ -294,10 +292,7 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-excepti
 					<else>
 						<!-- Java 19+ (SecurityManager removed) -->
 						<javac srcdir="${srcpath}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1" classpathref="build.cp">
-							<compilerarg line='${addExports}' />
-							<compilerarg line='${addExports_90_jcl}' />
-							<compilerarg line='${addExports_version}' />
-							<compilerarg line='--add-modules openj9.sharedclasses' />
+							<compilerarg line='${commonArgs}' />
 							<!-- PR117298 -->
 							<exclude name="**/Cmvc194280.java" />
 							<exclude name="**/resources/**" />

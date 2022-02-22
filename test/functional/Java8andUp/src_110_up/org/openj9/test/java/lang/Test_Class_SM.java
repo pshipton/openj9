@@ -22,10 +22,8 @@ package org.openj9.test.java.lang;
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import org.testng.log4testng.Logger;
-import org.testng.annotations.BeforeMethod;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import java.io.File;
@@ -37,6 +35,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.*;
 
 import org.openj9.test.support.resource.Support_Resources;
 
@@ -54,7 +53,8 @@ public class Test_Class_SM {
 
 @Test
 public void test_getMethods_subtest2() {
-	java.security.PrivilegedAction action = new java.security.PrivilegedAction() {
+	PrivilegedAction<Object> action = new PrivilegedAction<Object>() {
+		@Override
 		public Object run() {
 			try {
 				File resources = Support_Resources.createTempFolder();
@@ -68,10 +68,10 @@ public void test_getMethods_subtest2() {
 
 				Support_Resources.copyFile(resources, null, "openj9tr_general.jar");
 				File file = new File(resources.toString() + "/openj9tr_general.jar");
-				java.net.URL url = new java.net.URL("file:" + file.getPath());
-				ClassLoader loader = new java.net.URLClassLoader(new java.net.URL[]{url}, null);
+				URL url = new URL("file:" + file.getPath());
+				ClassLoader loader = new URLClassLoader(new URL[]{url}, null);
 
-				Class cls_E = Class.forName("org.openj9.resources.classinheritance.E", false, loader);
+				Class<?> cls_E = Class.forName("org.openj9.resources.classinheritance.E", false, loader);
 				Method[] methodNames_E = cls_E.getMethods();
 				AssertJUnit.assertEquals("Returned incorrect number of methods for cls_E", expected_E.length + Object.class.getMethods().length, methodNames_E.length);
 				for (int i = 0; i < expected_E.length; i++) {
@@ -92,7 +92,7 @@ public void test_getMethods_subtest2() {
 			return null;
 		}
 	};
-	java.security.AccessController.doPrivileged(action);
+	AccessController.doPrivileged(action);
 }
 
 /**
@@ -100,18 +100,18 @@ public void test_getMethods_subtest2() {
  */
 @Test
 public void test_getClasses2() {
-	final java.security.Permission privCheckPermission = new java.security.BasicPermission("Privilege check") {
+	final Permission privCheckPermission = new BasicPermission("Privilege check") {
 	};
-	class MyCombiner implements java.security.DomainCombiner {
+	class MyCombiner implements DomainCombiner {
 		boolean combine;
-		public java.security.ProtectionDomain[] combine(java.security.ProtectionDomain[] executionDomains, java.security.ProtectionDomain[] parentDomains) {
+		public ProtectionDomain[] combine(ProtectionDomain[] executionDomains, ProtectionDomain[] parentDomains) {
 			combine = true;
-			return new java.security.ProtectionDomain[0];
+			return new ProtectionDomain[0];
 		}
 		public boolean isPriviledged() {
 			combine = false;
 			try {
-				java.security.AccessController.checkPermission(privCheckPermission);
+				AccessController.checkPermission(privCheckPermission);
 			} catch (SecurityException e) {
 			}
 			return !combine;
@@ -120,13 +120,13 @@ public void test_getClasses2() {
 	final MyCombiner combiner = new MyCombiner();
 	class SecurityManagerCheck extends SecurityManager {
 		String reason;
-		Class checkClass;
+		Class<?> checkClass;
 		int checkType;
 		int checkPermission = 0;
 		int checkMemberAccess = 0;
 		int checkPackageAccess = 0;
 
-		public void setExpected(String reason, Class cls, int type) {
+		public void setExpected(String reason, Class<?> cls, int type) {
 			this.reason = reason;
 			checkClass = cls;
 			checkType = type;
@@ -134,7 +134,7 @@ public void test_getClasses2() {
 			checkMemberAccess = 0;
 			checkPackageAccess = 0;
 		}
-		public void checkPermission(java.security.Permission perm) {
+		public void checkPermission(Permission perm) {
 			if (combiner.isPriviledged())
 				return;
 			checkPermission++;
@@ -160,18 +160,18 @@ public void test_getClasses2() {
 
 	final SecurityManagerCheck sm = new SecurityManagerCheck();
 
-	java.security.AccessControlContext acc = new java.security.AccessControlContext(new java.security.ProtectionDomain[0]);
-	java.security.AccessControlContext acc2 = new java.security.AccessControlContext(acc, combiner);
+	AccessControlContext acc = new AccessControlContext(new ProtectionDomain[0]);
+	AccessControlContext acc2 = new AccessControlContext(acc, combiner);
 
-	java.security.PrivilegedAction action = new java.security.PrivilegedAction() {
+	PrivilegedAction action = new PrivilegedAction() {
 		public Object run() {
 			File resources = Support_Resources.createTempFolder();
 			try {
 				Support_Resources.copyFile(resources, null, "openj9tr_general.jar");
 				File file = new File(resources.toString() + "/openj9tr_general.jar");
-				java.net.URL url = new java.net.URL("file:" + file.getPath());
-				ClassLoader loader = new java.net.URLClassLoader(new java.net.URL[]{url}, null);
-				Class cls = Class.forName("org.openj9.resources.security.SecurityTestSub", false, loader);
+				URL url = new URL("file:" + file.getPath());
+				ClassLoader loader = new URLClassLoader(new URL[]{url}, null);
+				Class<?> cls = Class.forName("org.openj9.resources.security.SecurityTestSub", false, loader);
 				// must preload junit.framework.Assert before installing SecurityManager
 				// otherwise loading it inside checkPackageAccess() is recursive
 				AssertJUnit.assertTrue("preload assertions", true);
@@ -247,7 +247,7 @@ public void test_getClasses2() {
 			return null;
 		}
 	};
-	java.security.AccessController.doPrivileged(action, acc2);
+	AccessController.doPrivileged(action, acc2);
 }
 
 /**
@@ -258,7 +258,7 @@ public void test_getResource() {
 	// Test for method java.net.URL java.lang.Class.getResource(java.lang.String)
 	System.setSecurityManager(new SecurityManager());
 	try {
-		java.net.URL res = Object.class.getResource("Object.class");
+		URL res = Object.class.getResource("Object.class");
 		AssertJUnit.assertTrue("Object.class should not be found", res == null);
 	} finally {
 		System.setSecurityManager(null);
@@ -282,7 +282,7 @@ public void test_getResource() {
 public void test_getResourceAsStream() {
 	// Test for method java.io.InputStream java.lang.Class.getResourceAsStream(java.lang.String)
 	String name = Support_Resources.RESOURCE_PACKAGE + "openj9tr_compressD.txt";
-	Class clazz = null;
+	Class<?> clazz = null;
 	try {
 		clazz = Class.forName("org.openj9.test.java.lang.Test_Class_SM");
 	} catch (ClassNotFoundException e) {
