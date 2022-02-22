@@ -27,7 +27,8 @@ import java.nio.charset.Charset;
 public class SysPropTest 
 {
 	/* TestVa&#187;lue&#161; */	
-	static final byte[] B = { (byte)0x54, (byte)0x65, (byte)0x73, (byte)0x74,  (byte)0x56, (byte)0x61,(byte) 187, (byte)0x6C, (byte)0x75, (byte)0x65, (byte) 161};	
+	static final byte[] B = { (byte)'T', (byte)'e', (byte)'s', (byte)'t', (byte)'V', (byte)'a', (byte)187, (byte)'l', (byte)'u', (byte)'e', (byte)161};	
+	static final byte[] Butf8 = { (byte)'T', (byte)'e', (byte)'s', (byte)'t', (byte)'V', (byte)'a', (byte)0xC2, (byte)187, (byte)'l', (byte)'u', (byte)'e', (byte)0xC2, (byte)161};	
 
 	public static void main(String args[])
 	{
@@ -37,13 +38,24 @@ public class SysPropTest
 			return;
 		}
 		String argEncoding = args[0];
-		/* check -Dtestkey=Test?Va?lue?  */
+		/* check -Dtestkey=TestVa?lue?  */
 		try {
 			String osEncoding = "";
 			String strTestProp;
 			if (System.getProperty("os.name").contains("Windows")) {
 				isWindows = true;
 			}
+			String verString = System.getProperty("java.version");
+			for (int i = 0; i < verString.length(); i++) {
+				if (!Character.isDigit(verString.charAt(i))) {
+					verString = verString.substring(0, i);
+					break;
+				}
+			}
+			int javaVersion = Integer.decode(verString);
+			
+			/* On jdk18+ with JEP 400 UTF-8 by default, the non-ascii characters in the testkey property are converted to UTF8. */
+			final byte[] expectedB = javaVersion >= 18 && !isWindows ? Butf8 : B;
 
 			if (argEncoding.equals("DEFAULT")) {
 				osEncoding = System.getProperty("os.encoding");
@@ -53,12 +65,12 @@ public class SysPropTest
 			   sets os.encoding to UTF8. To replicate this behavior, on Windows use the default encoding
 			   and not the os.encoding. */
 			if (osEncoding != null && osEncoding.length() != 0 && isWindows == false) {  
-				strTestProp = new String(B,osEncoding);
+				strTestProp = new String(expectedB, osEncoding);
 			} else {
 				if ((argEncoding.equals("UTF-8") || argEncoding.equals("ISO-8859-1"))) {
-					strTestProp = new String(B,argEncoding);
+					strTestProp = new String(expectedB, argEncoding);
 				} else {
-					strTestProp = new String(B, System.getProperty("native.encoding", Charset.defaultCharset().name()));
+					strTestProp = new String(expectedB, System.getProperty("native.encoding", Charset.defaultCharset().name()));
 				}
 			}
 			
