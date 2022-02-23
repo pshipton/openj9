@@ -41,11 +41,10 @@ public class Test_J9VMInternalsImpl_SM {
 	private static final String TEST_RESTRICTED = "$TestRestricted"; //$NON-NLS-1$
 	static final Logger logger = Logger.getLogger(Test_J9VMInternalsImpl_SM.class);
 
-	public  static class SuperclassRestricted extends sun.misc.test.RestrictedClass {
+	public static class SuperclassRestricted extends sun.misc.test.RestrictedClass {
 		static {
 			logger.debug("FAILED: clinit of SuperclassRestricted called"); //$NON-NLS-1$
 		}
-
 	}
 
 	public static class InterfaceRestricted implements sun.misc.test.RestrictedInterface {
@@ -132,10 +131,10 @@ public class Test_J9VMInternalsImpl_SM {
 			try {
 				@SuppressWarnings({ "unused", "rawtypes" })
 				Class cl2 = Class.forName(RESTRICTED_CLASS);
-				Assert.fail("FAILED: unexpected behavior: successfully loaded "  //$NON-NLS-1$
+				Assert.fail("FAILED: unexpected behavior: successfully loaded " //$NON-NLS-1$
 						+ RESTRICTED_CLASS + " using forName"); //$NON-NLS-1$
 			} catch (SecurityException e) {
-				logger.debug("PASSED: forName of"  //$NON-NLS-1$
+				logger.debug("PASSED: forName of " //$NON-NLS-1$
 						+ RESTRICTED_CLASS + ": " + e); //$NON-NLS-1$
 			} catch (ClassNotFoundException e) {
 				Assert.fail("FAILED: unexpected: " + e); //$NON-NLS-1$
@@ -146,12 +145,12 @@ public class Test_J9VMInternalsImpl_SM {
 				Object o = new Object();
 				@SuppressWarnings("unused")
 				sun.misc.test.RestrictedClass encoder = (sun.misc.test.RestrictedClass)o;
-				Assert.fail("FAILED: successfully cast to" + RESTRICTED_CLASS); //$NON-NLS-1$
+				Assert.fail("FAILED: successfully cast to " + RESTRICTED_CLASS); //$NON-NLS-1$
 			} catch (ClassCastException e) {
-				Assert.fail("FAILED: cast to"  //$NON-NLS-1$
+				Assert.fail("FAILED: cast to " //$NON-NLS-1$
 						+ RESTRICTED_CLASS + ": " + e); //$NON-NLS-1$
 			} catch (SecurityException e) {
-				logger.debug("PASSED: casting to"  //$NON-NLS-1$
+				logger.debug("PASSED: casting to " //$NON-NLS-1$
 						+ RESTRICTED_CLASS + ": " + e); //$NON-NLS-1$
 			}
 
@@ -161,10 +160,10 @@ public class Test_J9VMInternalsImpl_SM {
 				if (o instanceof sun.misc.test.RestrictedClass) {
 					/* intentionally empty */
 				}
-				Assert.fail("FAILED: successfully tested instanceof"  //$NON-NLS-1$
+				Assert.fail("FAILED: successfully tested instanceof " //$NON-NLS-1$
 						+ RESTRICTED_CLASS);
 			} catch (SecurityException e) {
-				logger.debug("PASSED: instanceof"  //$NON-NLS-1$
+				logger.debug("PASSED: instanceof " //$NON-NLS-1$
 						+ RESTRICTED_CLASS + ": " + e); //$NON-NLS-1$
 			}
 
@@ -181,11 +180,9 @@ public class Test_J9VMInternalsImpl_SM {
 			try {
 				@SuppressWarnings({ "unused" })
 				Object result = com.ibm.oti.util.ReflectPermissions.permissionSuppressAccessChecks;
-				Assert.fail(
-						"FAILED: accessed static field in com.ibm.oti.util.ReflectPermissions"); //$NON-NLS-1$
+				Assert.fail("FAILED: accessed static field in com.ibm.oti.util.ReflectPermissions"); //$NON-NLS-1$
 			} catch (SecurityException e) {
-				logger.debug(
-						"PASSED: accessing static field on sun.misc.ASCIICaseInsensitiveComparator: " + e); //$NON-NLS-1$
+				logger.debug("PASSED: accessing static field on sun.misc.ASCIICaseInsensitiveComparator: " + e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -241,10 +238,10 @@ public class Test_J9VMInternalsImpl_SM {
 				if (name.startsWith(ORG_TESTNG)) {
 					result = Class.forName(name, true, ClassLoader.getSystemClassLoader());
 				} else {
-				if (!name.startsWith(className + TEST_RESTRICTED)) {
-					throw new ClassNotFoundException(name);
-				}
-				result = super.findClass(name);
+					if (!name.startsWith(className + TEST_RESTRICTED)) {
+						throw new ClassNotFoundException(name);
+					}
+					result = super.findClass(name);
 				}
 				return result;
 			}

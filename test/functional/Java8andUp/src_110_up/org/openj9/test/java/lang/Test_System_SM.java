@@ -38,8 +38,7 @@ public class Test_System_SM {
 	 */
 	@Test
 	public void test_getSecurityManager() {
-		AssertJUnit.assertTrue("Returned incorrect SecurityManager", System
-				.getSecurityManager() == null);
+		AssertJUnit.assertTrue("Returned incorrect SecurityManager", System.getSecurityManager() == null);
 	}
 
 	/**
@@ -51,16 +50,16 @@ public class Test_System_SM {
 		class MySecurityManager extends SecurityManager {
 			public void preloadClasses(Permission perm) {
 				if (!(perm instanceof RuntimePermission)
-						|| !perm.getName().toLowerCase().equals(
-								"setsecuritymanager")) {
+					|| !(perm.getName().toLowerCase().equals("setsecuritymanager"))
+				) {
 					// do nothing, required classes are now loaded
 				}
 			}
 
 			public void checkPermission(Permission perm) {
 				if (!(perm instanceof RuntimePermission)
-						|| !perm.getName().toLowerCase().equals(
-								"setsecuritymanager")) {
+					|| !(perm.getName().toLowerCase().equals("setsecuritymanager"))
+				) {
 					super.checkPermission(perm);
 				}
 			}
@@ -73,13 +72,13 @@ public class Test_System_SM {
 		} catch (SecurityException e) {
 		}
 		try {
-					System.setSecurityManager(new SecurityManager());
+			System.setSecurityManager(new SecurityManager());
 			System.getProperty("someProperty");
 			Assert.fail("should cause SecurityException");
 		} catch (SecurityException e) {
 			// expected
 		} finally {
-					System.setSecurityManager(null);
+			System.setSecurityManager(null);
 		}
 	}
 
@@ -93,8 +92,7 @@ public class Test_System_SM {
 			String output = Support_Exec.execJava(new String[] {
 					"-Djava.security.manager=" + helperName, helperName },
 					null, true);
-			AssertJUnit.assertTrue("not correct SecurityManager: " + output, output
-					.startsWith(helperName));
+			AssertJUnit.assertTrue("not correct SecurityManager: " + output, output.startsWith(helperName));
 		} catch (Exception e) {
 			Assert.fail("Unexpected: " + e);
 		}

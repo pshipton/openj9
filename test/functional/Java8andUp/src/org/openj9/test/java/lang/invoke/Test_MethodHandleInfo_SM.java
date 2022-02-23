@@ -59,7 +59,7 @@ public class Test_MethodHandleInfo_SM {
 			@Override
 			public Class<?> loadClass(String className) throws ClassNotFoundException {
 				if (className.equals(lookup)) {
-					return getClass( className );
+					return getClass(className);
 				}
 				if (className.equals(methodHandle)) {
 					return getClass(className);
@@ -67,22 +67,22 @@ public class Test_MethodHandleInfo_SM {
 				return super.loadClass(className);
 			}
 
-			private Class<?> getClass( String className )throws ClassNotFoundException {
+			private Class<?> getClass(String className)throws ClassNotFoundException {
 				String classFile = className.replace('.', '/') + ".class";
 				try {
-					InputStream classStream = getClass().getClassLoader().getResourceAsStream( classFile );
-					if ( classStream == null ) {
-						throw new ClassNotFoundException( "Error loading class : " + classFile );
+					InputStream classStream = getClass().getClassLoader().getResourceAsStream(classFile);
+					if (classStream == null) {
+						throw new ClassNotFoundException("Error loading class : " + classFile);
 					}
 			        int size = classStream.available();
 			        byte classRep[] = new byte[size];
-			        DataInputStream in = new DataInputStream( classStream );
-			        in.readFully( classRep );
+			        DataInputStream in = new DataInputStream(classStream);
+			        in.readFully(classRep);
 			        in.close();
-			        Class<?> clazz = defineClass( className, classRep, 0, classRep.length );
+			        Class<?> clazz = defineClass(className, classRep, 0, classRep.length);
 					return clazz;
-				} catch ( IOException e ) {
-					throw new ClassNotFoundException( e.getMessage() );
+				} catch (IOException e) {
+					throw new ClassNotFoundException(e.getMessage());
 				}
 			}
 
@@ -96,28 +96,28 @@ public class Test_MethodHandleInfo_SM {
 
 			@Override
 			public Class<?> loadClass(String className) throws ClassNotFoundException {
-				if ( className.equals(methodHandle) ) {
-					return getClass( className );
+				if (className.equals(methodHandle)) {
+					return getClass(className);
 				}
-				return super.loadClass( className );
+				return super.loadClass(className);
 			}
 
-			private Class<?> getClass( String className )throws ClassNotFoundException {
+			private Class<?> getClass(String className)throws ClassNotFoundException {
 				String classFile = className.replace('.', '/') + ".class";
 				try {
-					InputStream classStream = getClass().getClassLoader().getResourceAsStream( classFile );
-					if ( classStream == null ) {
-						throw new ClassNotFoundException( "Error loading class : " + classFile );
+					InputStream classStream = getClass().getClassLoader().getResourceAsStream(classFile);
+					if (classStream == null) {
+						throw new ClassNotFoundException("Error loading class : " + classFile);
 					}
 			        int size = classStream.available();
 			        byte classRep[] = new byte[size];
-			        DataInputStream in = new DataInputStream( classStream );
-			        in.readFully( classRep );
+			        DataInputStream in = new DataInputStream(classStream);
+			        in.readFully(classRep);
 			        in.close();
-			        Class<?> clazz = defineClass( className, classRep, 0, classRep.length );
+			        Class<?> clazz = defineClass(className, classRep, 0, classRep.length);
 					return clazz;
-				} catch ( IOException e ) {
-					throw new ClassNotFoundException( e.getMessage() );
+				} catch (IOException e) {
+					throw new ClassNotFoundException(e.getMessage());
 				}
 			}
 

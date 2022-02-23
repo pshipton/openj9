@@ -1371,28 +1371,31 @@ public class VmArgumentTests {
 			String[] cmdLineArgs;
 			String[] expectedArgs;
 			if (VersionCheck.major() < 19) {
+				final String policy = "-Djava.security.policy=/opt/IBM/WebSphere/AppServer80/profiles/AppSrv01/properties/server.policy";
 				if (isJava8) {
 					/*
 					 * This test should only run for Java 1.8.0. For Java
 					 * 1.9.0 and above, we do not support java.ext.dirs property.
 					 */
+					final String dirs = "-Djava.ext.dirs=/opt/IBM/WebSphere/AppServer80/tivoli/tam:/opt/IBM/WebSphere/AppServer80/java/jre/lib/ext";
+
 					cmdLineArgs = new String[initialCmdLineArgs.length + 2];
 					System.arraycopy(initialCmdLineArgs, 0, cmdLineArgs, 0, initialCmdLineArgs.length);
-					cmdLineArgs[initialCmdLineArgs.length] = "-Djava.security.policy=/opt/IBM/WebSphere/AppServer80/profiles/AppSrv01/properties/server.policy";
-					cmdLineArgs[initialCmdLineArgs.length + 1] = "-Djava.ext.dirs=/opt/IBM/WebSphere/AppServer80/tivoli/tam:/opt/IBM/WebSphere/AppServer80/java/jre/lib/ext";
+					cmdLineArgs[initialCmdLineArgs.length] = policy;
+					cmdLineArgs[initialCmdLineArgs.length + 1] = dirs;
 
 					expectedArgs = new String[initialExpectedArgs.length + 2];
 					System.arraycopy(initialExpectedArgs, 0, expectedArgs, 0, initialExpectedArgs.length);
-					expectedArgs[initialExpectedArgs.length] = "-Djava.security.policy=/opt/IBM/WebSphere/AppServer80/profiles/AppSrv01/properties/server.policy";
-					expectedArgs[initialExpectedArgs.length + 1] = "-Djava.ext.dirs=/opt/IBM/WebSphere/AppServer80/tivoli/tam:/opt/IBM/WebSphere/AppServer80/java/jre/lib/ext";
+					expectedArgs[initialExpectedArgs.length] = policy;
+					expectedArgs[initialExpectedArgs.length + 1] = dirs;
 				} else {
 					cmdLineArgs = new String[initialCmdLineArgs.length + 1];
 					System.arraycopy(initialCmdLineArgs, 0, cmdLineArgs, 0, initialCmdLineArgs.length);
-					cmdLineArgs[initialCmdLineArgs.length] = "-Djava.security.policy=/opt/IBM/WebSphere/AppServer80/profiles/AppSrv01/properties/server.policy";
+					cmdLineArgs[initialCmdLineArgs.length] = policy;
 
 					expectedArgs = new String[initialExpectedArgs.length + 1];
 					System.arraycopy(initialExpectedArgs, 0, expectedArgs, 0, initialExpectedArgs.length);
-					expectedArgs[initialExpectedArgs.length] = "-Djava.security.policy=/opt/IBM/WebSphere/AppServer80/profiles/AppSrv01/properties/server.policy";
+					expectedArgs[initialExpectedArgs.length] = policy;
 				}
 			} else {
 				/* SecurityManager and related classes have been removed. */

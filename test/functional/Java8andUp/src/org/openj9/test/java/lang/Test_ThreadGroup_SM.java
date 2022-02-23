@@ -370,8 +370,9 @@ public class Test_ThreadGroup_SM {
 					// It can only be done if no more threads. Unfortunately we
 					// are relying on this
 					// API to work as well. If it does not, we may loop forever.
-					if (aGroup.activeCount() == 0)
-					break;
+					if (aGroup.activeCount() == 0) {
+						break;
+					}
 			} catch (InterruptedException e) {
 			}
 		}
