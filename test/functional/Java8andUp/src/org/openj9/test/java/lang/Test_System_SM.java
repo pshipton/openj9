@@ -29,6 +29,7 @@ import org.testng.AssertJUnit;
 import java.security.Permission;
 
 import org.openj9.test.support.Support_Exec;
+import org.openj9.test.util.VersionCheck;
 
 @Test(groups = { "level.sanity" })
 public class Test_System_SM {
@@ -114,15 +115,17 @@ public class Test_System_SM {
 	@Test
 	public void test_setSecurityManager3() {
 		/* https://github.com/eclipse-openj9/openj9/issues/6661 */
-		try {
-			String helperName = "org.openj9.test.java.lang.Test_System_SM$TestSecurityManagerNonPublicConstructor";
-			String output = Support_Exec.execJava(new String[] { "-Djava.security.manager=" + helperName, helperName },
-					null, true,
-					"java.lang.NoSuchMethodException: org.openj9.test.java.lang.Test_System_SM$TestSecurityManagerNonPublicConstructor.<init>()");
-			// if the expected error string was not found, Assert.fail() will be invoked
-			// within Support_Exec.execJava() above.
-		} catch (Exception e) {
-			Assert.fail("Unexpected: " + e);
+		if (VersionCheck.major() >= 11) {
+			try {
+				String helperName = "org.openj9.test.java.lang.Test_System_SM$TestSecurityManagerNonPublicConstructor";
+				String output = Support_Exec.execJava(new String[] { "-Djava.security.manager=" + helperName, helperName },
+						null, true,
+						"java.lang.NoSuchMethodException: org.openj9.test.java.lang.Test_System_SM$TestSecurityManagerNonPublicConstructor.<init>()");
+				// if the expected error string was not found, Assert.fail() will be invoked
+				// within Support_Exec.execJava() above.
+			} catch (Exception e) {
+				Assert.fail("Unexpected: " + e);
+			}
 		}
 	}
 

@@ -1363,11 +1363,14 @@
 	JCL_TEST_Test-Annotation-ClassLoader,\
 	JCL_TEST_Test-Annotation-Package,\
 	JCL_TEST_Java-Lang_ClassLoader,\
+	JCL_TEST_Java-Lang_ClassLoader_SM,\
 	JCL_TEST_Test-Defects,\
 	JCL_TEST_Test-UnsafeFence,\
 	JCL_TEST_IBM-VM,\
 	JCL_TEST_Java-Lang,\
+	JCL_TEST_Java-Lang_SM,\
 	JCL_TEST_Java-Lang-Invoke,\
+	JCL_TEST_Java-Lang-Invoke_SM,\
 	JCL_TEST_Java-Lang-Ref,\
 	JCL_TEST_Java-Lang-Reflect,\
 	JCL_TEST_Java-Math,\
@@ -1535,7 +1538,9 @@
 	-Xbootclasspath/a:$(TEST_RESROOT)$(D)TestResources.jar \
 	-cp $(Q)$(RESOURCES_DIR)$(P)$(TESTNG)$(P)$(TEST_RESROOT)$(D)GeneralTest.jar$(P)$(TEST_RESROOT)$(D)TestResources.jar$(P)$(LIB_DIR)$(D)asm-all.jar$(Q) \
 	org.testng.TestNG -d $(REPORTDIR) $(Q)$(TEST_RESROOT)$(D)testng.xml$(Q) \
-	-testnames JCL_TEST_Java-Internals \
+	-testnames \
+	JCL_TEST_Java-Internals,\
+	JCL_TEST_Java-Internals_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
@@ -1568,7 +1573,9 @@
 	-Xbootclasspath/a:$(TEST_RESROOT)$(D)TestResources.jar \
 	-cp $(Q)$(RESOURCES_DIR)$(P)$(TESTNG)$(P)$(TEST_RESROOT)$(D)GeneralTest.jar$(P)$(TEST_RESROOT)$(D)TestResources.jar$(P)$(LIB_DIR)$(D)asm-all.jar$(Q) \
 	org.testng.TestNG -d $(REPORTDIR) $(Q)$(TEST_RESROOT)$(D)testng.xml$(Q) \
-	-testnames JCL_TEST_Java-Security \
+	-testnames \
+	JCL_TEST_Java-Security,\
+	JCL_TEST_Java-Security_SM \
 	-groups $(TEST_GROUP) \
 	-excludegroups $(DEFAULT_EXCLUDE); \
 	$(TEST_STATUS)</command>
