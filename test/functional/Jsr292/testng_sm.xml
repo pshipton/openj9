@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2016, 2020 IBM Corp. and others
+  Copyright (c) 2022, 2022 IBM Corp. and others
 
   This program and the accompanying materials are made available under
   the terms of the Eclipse Public License 2.0 which accompanies this
@@ -23,10 +23,7 @@
 -->
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="jsr292_Suite_SE90" parallel="none" verbose="2">
-	<listeners>
-		<listener class-name="org.openj9.test.util.IncludeExcludeTestAnnotationTransformer"/>
-	</listeners>
+<suite name="jsr292 SecurityManager suite" parallel="none" verbose="2">
 	<test name="jsr292Test">
 		<classes>
 			<class name="com.ibm.j9.jsr292.AdaptorTests"/>
@@ -50,32 +47,6 @@
 		</classes>
 	</test>
 
-	<test name="jsr292Test_Lookup">
-		<classes>
-			<class name="com.ibm.j9.jsr292.LookupAPITests_FindClass"/>
-			<class name="com.ibm.j9.jsr292.LookupAPITests_AccessClass"/>
-			<class name="com.ibm.j9.jsr292.LookupAPITests_Bind"/>
-			<class name="com.ibm.j9.jsr292.LookupAPITests_Find"/>
-			<class name="com.ibm.j9.jsr292.LookupAPITests_Unreflect"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_dropLookupMode"/>
-		</classes>
-	</test>
-
-	<test name="jsr292Test_Java11up">
-		<classes>
-			<class name="com.ibm.j9.jsr292.MethodHandleInvokeWithArgumentsJumboTest"/>
-		</classes>
-	</test>
-
-	<test name="jsr292Test_Java12up">
-		<classes>
-			<class name="com.ibm.j9.jsr292.FilterArgumentsWithCombinerTest"/>
-		</classes>
-	</test>
-<!--
-	The following tests are used to check whether some specific methods are correctly compiled by JIT.
-	If the JIT is not ON or with count=0 parameter, then there is no point to enable these tests.
--->
 	<test name="jsr292Test_optional">
 		<classes>
 			<class name="com.ibm.j9.jsr292.VirtualHandleTest"/>
@@ -86,34 +57,9 @@
 		</classes>
 	</test>
 
-	<test name="jsr292BootstrapTest">
+	<test name="jsr292Test_SM">
 		<classes>
-			<class name="com.ibm.j9.jsr292.bootstrap.Test_CallerSensitive"/>
-		</classes>
-	</test>
-
-	<test name="jsr292_MethodHandleAPI_Test">
-		<classes>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_asCollector"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_asSpreader"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_foldArguments"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_withVarargs"/>	
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_tryFinally"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_loop"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_iteratedLoop"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_zero"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_whileLoop"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_countedLoop"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_arrayLength"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_arrayConstructor"/>
-			<class name="com.ibm.j9.jsr292.api.MethodHandleAPI_dropArgumentsToMatch"/>
-		</classes>
-	</test>
-
-	<test name="jsr292_InDynTest">
-		<classes>
-			<class name="com.ibm.j9.jsr292.indyn.IndyTest"/>
-			<class name="com.ibm.j9.jsr292.indyn.ComplexIndyTest"/>
+			<class name="com.ibm.j9.jsr292.MethodTypeTests_SM"/>
 		</classes>
 	</test>
 </suite>
