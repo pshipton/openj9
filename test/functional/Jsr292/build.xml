@@ -130,22 +130,11 @@
 						<property name="addExports" value="--add-exports java.base/jdk.internal.reflect=ALL-UNNAMED" />
 					</else>
 				</if>
-				<if>
-					<matches string="${JDK_VERSION}" pattern="^(9|(1[0-8]))$$" />
-					<then>
-						<!-- Java 9-18 -->
-						<javac srcdir="${bootstrapSrc}" destdir="${bootstrapBuild}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
-							<src path="${bootstrapSrc_90}"/>
-							<compilerarg line='${addExports}' />
-						</javac>
-					</then>
-					<else>
-						<!-- Java 19+ (SecurityManager removed) -->
-						<javac srcdir="${bootstrapSrc}" destdir="${bootstrapBuild}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
-							<compilerarg line='${addExports}' />
-						</javac>
-					</else>
-				</if>
+				<javac srcdir="${bootstrapSrc}" destdir="${bootstrapBuild}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1">
+					<src path="${bootstrapSrc}"/>
+					<src path="${bootstrapSrc_90}"/>
+					<compilerarg line='${addExports}' />
+				</javac>
 			</else>
 		</if>
 	</target>
@@ -222,7 +211,6 @@
 						<javac srcdir="${srcpath}" excludes="${commonExcludes}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1" classpathref="build.cp">
 							<!-- exclude tests that depend on SecurityManager -->
 							<exclude name="com/ibm/j9/jsr292/MethodTypeTests_SM.java"/>
-							<exclude name="com/ibm/j9/jsr292/bootstrap/Test_CallerSensitive.java"/>
 						</javac>
 					</else>
 				</if>
