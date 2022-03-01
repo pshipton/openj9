@@ -100,8 +100,8 @@
 						<javac srcdir="${srcpath}" destdir="${build}" debug="true" fork="true" executable="${compiler.javac}" includeAntRuntime="false" encoding="ISO-8859-1" classpathref="build.cp">
 							<compilerarg line='${addExports} ${TestUtilitiesExports}' />
 							<!-- exclude tests that depend on SecurityManager -->
-							<exclude name="org/openj9/test/java/lang/management/TestSharedClassMemoryMXBean.java" />
-							<exclude name="org/openj9/test/java/lang/management/TestRegression.java" />
+							<exclude name="org/openj9/test/java/lang/management/TestSharedClassMemoryMXBean_SM.java" />
+							<exclude name="org/openj9/test/java/lang/management/TestRegression_SM.java" />
 						</javac>
 					</else>
 				</if>
