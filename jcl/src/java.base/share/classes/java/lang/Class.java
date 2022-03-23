@@ -25,12 +25,18 @@ package java.lang;
 import java.io.InputStream;
 import java.security.AccessControlContext;
 import java.security.ProtectionDomain;
+import java.security.AllPermission;
 import java.security.Permissions;
+/*[IF JAVA_SPEC_VERSION >= 12]*/
+import java.lang.constant.ClassDesc;
+/*[ENDIF] JAVA_SPEC_VERSION >= 12*/
 import java.lang.reflect.*;
 import java.net.URL;
 import java.lang.annotation.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -243,19 +249,6 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	 */
 	private static final class ClassReflectNullPlaceHolder {}
 
-	private static final class MetadataCache {
-		MetadataCache() {}
-
-		static long cachedCanonicalNameOffset = -1;
-		static long cachedSimpleNameOffset = -1;
-
-		SoftReference<String> cachedCanonicalName;
-		SoftReference<String> cachedSimpleName;
-	}
-
-	private transient MetadataCache metadataCache;
-	private static long metadataCacheOffset = -1;
-
 	private transient Class<?>[] cachedInterfaces;
 	private static long cachedInterfacesOffset = -1;
 
@@ -341,6 +334,27 @@ private void checkNonSunProxyMemberAccess(SecurityManager security, ClassLoader 
 			security.checkPackageAccess(packageName);
 		}
 	}
+}
+
+private long getFieldOffset(String fieldName) {
+	try {
+		Field field = Class.class.getDeclaredField(fieldName);
+		return getUnsafe().objectFieldOffset(field);
+	} catch (NoSuchFieldException e) {
+		throw newInternalError(e);
+	}
+}
+
+/**
+ * This helper method atomically writes the given {@code fieldValue} to the
+ * field specified by the {@code fieldOffset}
+ */
+private void writeFieldValue(long fieldOffset, Object fieldValue) {
+	/*[IF Sidecar19-SE]*/
+	getUnsafe().putObjectRelease(this, fieldOffset, fieldValue);
+	/*[ELSE]*/
+	getUnsafe().putOrderedObject(this, fieldOffset, fieldValue);
+	/*[ENDIF]*/
 }
 
 private static void forNameAccessCheck(final SecurityManager sm, final Class<?> callerClass, final Class<?> foundClass) {
@@ -949,28 +963,11 @@ public Field getDeclaredField(String name) throws NoSuchFieldException, Security
 		ClassLoader callerClassLoader = ClassLoader.getStackClassLoader(1);
 		checkMemberAccess(security, callerClassLoader, Member.DECLARED);
 	}
-	return getDeclaredFieldInternal(name, true);
-}
 
-/**
- * A private helper method for getDeclaredField().
- * This is for internal usage, no security check required,
- * and if doCache is false, the field is to be retrieved without caching
- * which can avoid circular dependency at JVM bootstrapping phase.
- *
- * @param		name		The name of the field to look for.
- * @param		doCache		The flag to determine if caching the field.
- * @return		the field in the receiver named by the argument.
- * @throws		NoSuchFieldException if the requested field could not be found
- */
-@CallerSensitive
-private Field getDeclaredFieldInternal(String name, boolean doCache) throws NoSuchFieldException {
-	if (doCache) {
-		/*[PR CMVC 114820, CMVC 115873, CMVC 116166] add reflection cache */
-		Field cachedField = lookupCachedField(name);
-		if (cachedField != null && cachedField.getDeclaringClass() == this) {
-			return cachedField;
-		}
+	/*[PR CMVC 114820, CMVC 115873, CMVC 116166] add reflection cache */
+	Field cachedField = lookupCachedField(name);
+	if (cachedField != null && cachedField.getDeclaringClass() == this) {
+		return cachedField;
 	}
 
 	/*[PR CMVC 192714,194493] prepare the class before attempting to access members */
@@ -983,12 +980,7 @@ private Field getDeclaredFieldInternal(String name, boolean doCache) throws NoSu
 	if (0 == fields.length) {
 		throw new NoSuchFieldException(name);
 	}
-	
-	if (doCache) {
-		return cacheField(fields[0]);
-	} else {
-		return fields[0];
-	}
+	return cacheField(fields[0]);
 }
 
 /**
@@ -1049,7 +1041,7 @@ public Field[] getDeclaredFields() throws SecurityException {
  */
 private native Field[] getDeclaredFieldsImpl();
 
-/*[IF JAVA_SPEC_VERSION >= 11]*/
+/*[IF Sidecar19-SE]
 /**
  * Answers a list of method objects which represent the public methods
  * described by the arguments. Note that the associated method may not 
@@ -1122,7 +1114,7 @@ private List<Method> cacheDeclaredPublicMethods(List<Method> methods, CacheKey c
 	}
 	return methods;
 }
-/*[ENDIF] JAVA_SPEC_VERSION >= 11 */
+/*[ENDIF]*/
 
 /**
  * A helper method for reflection debugging
@@ -3043,81 +3035,6 @@ private MethodHandle getValueMethod(final Class<? extends Annotation> containedT
 	return valueMethod;
 }
 
-private MetadataCache getMetadataCache() {
-	if (metadataCache == null) {
-		/*[IF JAVA_SPEC_VERSION >= 11]
-		metadataCacheOffset = getUnsafe().objectFieldOffset(Class.class, "metadataCache"); //$NON-NLS-1$
-		/*[ELSE] JAVA_SPEC_VERSION >= 11 */
-		try {
-			Field field = Class.class.getDeclaredFieldInternal("metadataCache", false); //$NON-NLS-1$
-			metadataCacheOffset = getUnsafe().objectFieldOffset(field);
-		} catch (NoSuchFieldException e) {
-			throw newInternalError(e);
-		}
-		/*[ENDIF] JAVA_SPEC_VERSION >= 11 */
-		writeFieldValue(metadataCacheOffset, new MetadataCache());
-	}
-	return metadataCache;
-}
-
-private String cacheSimpleName(String simpleName) {
-	MetadataCache cache = getMetadataCache();
-
-	if (cache.cachedSimpleName == null || cache.cachedSimpleName.get() == null) {
-		MetadataCache.cachedSimpleNameOffset = getFieldOffset(
-			MetadataCache.class, "cachedSimpleName", MetadataCache.cachedSimpleNameOffset); //$NON-NLS-1$
-
-		writeFieldValue(cache, MetadataCache.cachedSimpleNameOffset, new SoftReference<>(simpleName));
-	}
-
-	return simpleName;
-}
-
-private String cacheCanonicalName(String canonicalName) {
-	MetadataCache cache = getMetadataCache();
-
-	if (cache.cachedCanonicalName == null || cache.cachedCanonicalName.get() == null) {
-		MetadataCache.cachedCanonicalNameOffset = getFieldOffset(
-				MetadataCache.class, "cachedCanonicalName", MetadataCache.cachedCanonicalNameOffset); //$NON-NLS-1$
-
-		writeFieldValue(cache, MetadataCache.cachedCanonicalNameOffset, new SoftReference<>(canonicalName));
-	}
-
-	return canonicalName;
-}
-
-/**
- * This helper method atomically writes the given {@code fieldValue} to the
- * field specified by the {@code fieldOffset} of the {@code target} object
- */
-private static void writeFieldValue(Object target, long fieldOffset, Object fieldValue) {
-	/*[IF JAVA_SPEC_VERSION >= 11]
-	getUnsafe().putObjectRelease(target, fieldOffset, fieldValue);
-	/*[ELSE] JAVA_SPEC_VERSION >= 11 */
-	getUnsafe().putOrderedObject(target, fieldOffset, fieldValue);
-	/*[ENDIF] JAVA_SPEC_VERSION >= 11 */
-}
-
-private void writeFieldValue(long fieldOffset, Object fieldValue) {
-	writeFieldValue(this, fieldOffset, fieldValue);
-}
-
-private static long getFieldOffset(Class<?> hostClass, String fieldName, long initialOffset) {
-	if (initialOffset == -1) {
-		try {
-			Field field = hostClass.getDeclaredField(fieldName);
-			return getUnsafe().objectFieldOffset(field);
-		} catch (NoSuchFieldException e) {
-			throw newInternalError(e);
-		}
-	}
-	return initialOffset;
-}
-
-private static long getFieldOffset(String fieldName) {
-	return getFieldOffset(Class.class, fieldName, -1);
-}
-
 /**
  * Gets the array of containedType from the value() method.
  * 
@@ -3126,7 +3043,7 @@ private static long getFieldOffset(String fieldName) {
  * @param containedType the annotationType() stored in the container
  * @return Annotation array if the given annotation has a value() method which returns an array of the containedType. Otherwise, return null.
  */
-private static Annotation[] getAnnotationsArrayFromValue(Annotation container, Class<? extends Annotation> containerType, Class<? extends Annotation> containedType) {
+private Annotation[] getAnnotationsArrayFromValue(Annotation container, Class<? extends Annotation> containerType, Class<? extends Annotation> containedType) {
 	try {
 		MethodHandle valueMethod = containerType.getValueMethod(containedType);
 		if (valueMethod != null) {
@@ -3668,14 +3585,6 @@ private native String getSimpleNameImpl();
  * @see #isAnonymousClass()
  */
 public String getSimpleName() {
-	MetadataCache cache = getMetadataCache();
-	if (cache.cachedSimpleName != null) {
-		String cachedSimpleName = cache.cachedSimpleName.get();
-		if (cachedSimpleName != null) {
-			return cachedSimpleName;
-		}
-	}
-
 	int arrayCount = 0;
 	Class<?> baseType = this;
 	if (isArray()) {
@@ -3740,7 +3649,7 @@ public String getSimpleName() {
 		}
 		return result.toString();
 	}
-	return cacheSimpleName(simpleName);
+	return simpleName;
 }
 
 /**
@@ -3756,14 +3665,6 @@ public String getSimpleName() {
  * @see #isLocalClass()
  */
 public String getCanonicalName() {
-	MetadataCache cache = getMetadataCache();
-	if (cache.cachedCanonicalName != null) {
-		String cachedCanonicalName = cache.cachedCanonicalName.get();
-		if (cachedCanonicalName != null) {
-			return cachedCanonicalName;
-		}
-	}
-
 	int arrayCount = 0;
 	Class<?> baseType = this;
 	if (isArray()) {
@@ -3802,7 +3703,7 @@ public String getCanonicalName() {
 		}
 		return result.toString();
 	}
-	return cacheCanonicalName(canonicalName);
+	return canonicalName;
 }
 
 /**
@@ -4183,11 +4084,9 @@ private static final class CacheKey {
 	static CacheKey newMethodKey(String methodName, Class<?>[] parameterTypes, Class<?> returnType) {
 		return new CacheKey(methodName, parameterTypes, returnType);
 	}
-/*[IF JAVA_SPEC_VERSION >= 11]*/
 	static CacheKey newDeclaredPublicMethodsKey(String methodName, Class<?>[] parameterTypes) {
 		return new CacheKey("#m" + methodName, parameterTypes, null);	//$NON-NLS-1$
 	}
-/*[ENDIF] JAVA_SPEC_VERSION >= 11 */
 
 	static final CacheKey PublicConstructorsKey = new CacheKey("/c", EmptyParameters, null); //$NON-NLS-1$
 	static final CacheKey PublicFieldsKey = newFieldKey("/f", null); //$NON-NLS-1$
