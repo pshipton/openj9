@@ -194,7 +194,7 @@ ojdk292:
 # Linux PPCLE 64bits
 #========================================#
 ppc64le_linux:
-  extends: ['boot_jdk_default', 'cuda_version', 'debuginfo', 'openjdk_reference_repo', 'openssl']
+  extends: ['boot_jdk_default', 'cuda_version', 'debuginfo', 'openjdk_reference_repo', 'openssl', 'openssl_bundle']
   boot_jdk:
     arch: 'ppc64le'
     os: 'linux'
@@ -219,7 +219,7 @@ ppc64le_linux_jit:
 #       IBM 7 for the bootJDK or compiling corba will fail to find Object.
 #========================================#
 s390x_linux:
-  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl']
+  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl', 'openssl_bundle']
   boot_jdk:
     arch: 's390x'
     os: 'linux'
@@ -243,7 +243,7 @@ s390x_linux_jit:
 # AIX PPC 64bits
 #========================================#
 ppc64_aix:
-  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl']
+  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl', 'openssl_bundle']
   boot_jdk:
     location: '/opt/bootjdks'
     arch: 'ppc64'
@@ -275,7 +275,7 @@ ppc64_aix:
 # Linux x86 64bits
 #========================================#
 x86-64_linux:
-  extends: ['boot_jdk_default', 'cuda_version', 'debuginfo', 'openjdk_reference_repo', 'openssl']
+  extends: ['boot_jdk_default', 'cuda_version', 'debuginfo', 'openjdk_reference_repo', 'openssl', 'openssl_bundle']
   boot_jdk:
     arch: 'x64'
     os: 'linux'
@@ -315,7 +315,7 @@ x86-64_linux_jit:
 # Linux Aarch 64bits
 #========================================#
 aarch64_linux:
-  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl']
+  extends: ['boot_jdk_default', 'debuginfo', 'openjdk_reference_repo', 'openssl', 'openssl_bundle']
   boot_jdk:
     arch: 'aarch64'
     os: 'linux'
