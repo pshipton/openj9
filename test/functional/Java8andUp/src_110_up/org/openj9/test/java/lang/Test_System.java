@@ -45,10 +45,6 @@ import org.openj9.test.support.Support_Exec;
 @Test(groups = { "level.sanity" })
 public class Test_System {
 
-	// Properties orgProps = System.getProperties();
-	static boolean flag = false;
-	static boolean ranFinalize = false;
-
 	/**
 	 * @tests java.lang.System#setIn(java.io.InputStream)
 	 */
@@ -252,16 +248,15 @@ public class Test_System {
 	 */
 	@Test
 	public void test_runFinalization() {
-		flag = true;
-		createInstance();
+		FinalizeHelper.createInstance();
 		int count = 10;
 		// BB the gc below likely bogosifies the test, but will have to do for
 		// the moment
-		while (!ranFinalize && count-- > 0) {
+		while (!FinalizeHelper.ranFinalize() && count-- > 0) {
 			System.gc();
 			System.runFinalization();
 		}
-		AssertJUnit.assertTrue("Failed to run finalization", ranFinalize);
+		AssertJUnit.assertTrue("Failed to run finalization", FinalizeHelper.ranFinalize());
 	}
 
 	/**
@@ -297,26 +292,20 @@ public class Test_System {
 		}
 	}
 
-	/**
-	 * Sets up the fixture, for example, open a network connection. This method
-	 * is called before a test is executed.
-	 */
-	@BeforeMethod
-	protected void setUp() {
-		flag = false;
-		ranFinalize = false;
-	}
-
-	public Test_System(String name) {
-	}
-
-	protected Test_System createInstance() {
-		return new Test_System("FT");
-	}
-
-	protected void finalize() {
-		if (flag)
+	static class FinalizeHelper {
+		static volatile boolean ranFinalize;
+		static FinalizeHelper createInstance() {
+			return new FinalizeHelper("FH");
+		}
+		static boolean ranFinalize() {
+			return ranFinalize;
+		}
+		FinalizeHelper(String name) {
+			ranFinalize = false;
+		}
+		protected void finalize() {
 			ranFinalize = true;
+		}
 	}
 
 }
