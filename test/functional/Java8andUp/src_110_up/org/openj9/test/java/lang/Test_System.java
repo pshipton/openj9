@@ -296,7 +296,9 @@ public class Test_System {
 		static volatile boolean ranFinalize;
 		static FinalizeHelper createInstance() {
 			System.out.println("############ FinalizeHelper createInstance() called");
-			return new FinalizeHelper("FH");
+			FinalizeHelper instance = new FinalizeHelper("FH");
+			com.ibm.jvm.Dump.SystemDump();
+			return instance;
 		}
 		static boolean ranFinalize() {
 			return ranFinalize;
