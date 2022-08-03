@@ -147,9 +147,17 @@ validateSharedCacheInfoVersion5(jvmtiEnv *jvmti, jvmtiSharedCacheInfo *cache_inf
 		return JNI_EINVAL;
 	}
 	
-	if (0 != cache_info->layer) {
-		error(env, JVMTI_ERROR_INVALID_TYPESTATE, "Field layer of jvmtiSharedCacheInfo is wrong when passing COM_IBM_ITERATE_SHARED_CACHES_VERSION_5 to iterateSharedCacheFunction \n");
-		return JNI_EINVAL;
+	if (cache_info->isCompatible) {
+		if (0 != cache_info->layer) {
+			error(env, JVMTI_ERROR_INVALID_TYPESTATE, "Field layer of jvmtiSharedCacheInfo is wrong for compatible cache when passing COM_IBM_ITERATE_SHARED_CACHES_VERSION_5 to iterateSharedCacheFunction \n");
+			return JNI_EINVAL;
+		}
+	} else {
+		if ((0 != cache_info->layer) && (-1 != cache_info->layer)) {
+			error(env, JVMTI_ERROR_INVALID_TYPESTATE, "Field layer of jvmtiSharedCacheInfo is wrong for incompatible cache when passing COM_IBM_ITERATE_SHARED_CACHES_VERSION_5 to iterateSharedCacheFunction \n");
+			return JNI_EINVAL;
+		}
+		
 	}
 
 	cacheCountVersion5 ++;
