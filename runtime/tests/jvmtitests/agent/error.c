@@ -107,7 +107,7 @@ errorAppend(agentEnv *env, agentError *e)
 
 	env->errorCount++;
 
-	/* printErrorMessages(env); */
+	printErrorMessages(env);
 
 	return;
 }
