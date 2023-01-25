@@ -54,4 +54,12 @@
     <command>$EXE$ $OPENS$ $CP$ -D$DEFAULT_ENCODING_PROP$=$ENCODING2$ $TARGET$ err $ENCODING2$</command>
     <return type="success" value="0" />
   </test>
+
+  <test id="With -Dfile.encoding=CP943C default Charset is x-IBM943C">
+    <command>$EXE$ -Dfile.encoding=CP943C -cp $Q$$JARPATH$$Q$ DefaultCharset</command>
+    <output regex="no" type="success">x-IBM943C</output>
+    <output type="failure" caseSensitive="no" regex="no">Unhandled Exception</output>
+    <output type="failure" caseSensitive="yes" regex="no">Exception:</output>
+    <output type="failure" caseSensitive="yes" regex="no">Processing dump event</output>
+  </test>
 </suite>
