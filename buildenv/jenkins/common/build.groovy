@@ -755,7 +755,7 @@ def prepare_docker_environment() {
 }
 
 def get_docker_image_id(image) {
-    return sh (script: "docker images ${image} --format \"{{.ID}}\"", returnStdout: true).trim()
+    return sh (script: "docker images --format \"{{.ID}}\"", returnStdout: true).trim()
 }
 
 def _build_all() {
