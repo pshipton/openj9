@@ -29,7 +29,7 @@ module openj9.dtfjview {
   requires openj9.dtfj;
   requires java.logging;
 
-  exports com.ibm.jvm.dtfjview.commands to openj9.dtfj;
+  exports com.ibm.jvm.dtfjview.commands;
   exports com.ibm.jvm.dtfjview.commands.infocommands to openj9.dtfj;
   exports com.ibm.jvm.dtfjview.commands.setcommands to openj9.dtfj;
   exports com.ibm.jvm.dtfjview.commands.showcommands to openj9.dtfj;
