@@ -38,9 +38,11 @@ module openj9.dtfj {
   requires ibm.jzos;
   /*[ENDIF]*/
   exports com.ibm.j9ddr;
+  exports com.ibm.j9ddr.corereaders.memory;
   exports com.ibm.j9ddr.tools.ddrinteractive;
   exports com.ibm.j9ddr.vm29.pointer;
   exports com.ibm.j9ddr.vm29.pointer.generated;
+  exports com.ibm.j9ddr.vm29.types;
   exports com.ibm.dtfj.image;
   exports com.ibm.dtfj.image.j9 to openj9.dtfjview;
   exports com.ibm.dtfj.java;
