@@ -46,9 +46,6 @@ import jdk.internal.misc.VM;
 import java.lang.StackWalker.Option;
 import jdk.internal.reflect.Reflection;
 import jdk.internal.reflect.CallerSensitive;
-/*[IF JAVA_SPEC_VERSION >= 20] */
-import jdk.internal.util.SystemProps;
-/*[ENDIF] JAVA_SPEC_VERSION >= 20 */
 import java.util.*;
 import java.util.function.*;
 /*[ELSE]
@@ -64,6 +61,11 @@ import com.ibm.gpu.spi.GPUAssistHolder;
 /*[IF PLATFORM-mz31 | PLATFORM-mz64 | !Sidecar18-SE-OpenJ9]*/
 import com.ibm.jvm.io.ConsolePrintStream;
 /*[ENDIF] PLATFORM-mz31 | PLATFORM-mz64 | !Sidecar18-SE-OpenJ9 */
+
+/*[IF JAVA_SPEC_VERSION >= 20] */
+import java.lang.reflect.Field;
+import jdk.internal.util.SystemProps;
+/*[ENDIF] JAVA_SPEC_VERSION >= 20 */
 
 /**
  * Class System provides a standard place for programs
