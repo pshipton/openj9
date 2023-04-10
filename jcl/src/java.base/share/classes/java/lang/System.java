@@ -46,6 +46,9 @@ import jdk.internal.misc.VM;
 import java.lang.StackWalker.Option;
 import jdk.internal.reflect.Reflection;
 import jdk.internal.reflect.CallerSensitive;
+/*[IF JAVA_SPEC_VERSION >= 20] */
+import jdk.internal.util.SystemProps;
+/*[ENDIF] JAVA_SPEC_VERSION >= 20 */
 import java.util.*;
 import java.util.function.*;
 /*[ELSE]
@@ -129,10 +132,12 @@ public final class System {
 	private static String platformEncoding;
 	private static String fileEncoding;
 	private static String osEncoding;
+	private static String defaultTmpDir;
 
 	private static final int sysPropID_PlatformEncoding = 1;
 	private static final int sysPropID_FileEncoding = 2;
 	private static final int sysPropID_OSEncoding = 3;
+	private static final int sysPropID_DefaultTmpDir = 4;
 	/*[IF JAVA_SPEC_VERSION >= 17]*/
 	private static final int sysPropID_OSVersion = 0;
 	private static final String sysPropOSVersion;
@@ -189,6 +194,7 @@ public final class System {
 		if (osEncoding == null) {
 			osEncoding = definedOSEncoding;
 		}
+		defaultTmpDir = getSysPropBeforePropertiesInitialized(sysPropID_DefaultTmpDir);
 	}
 
 	/*[IF JAVA_SPEC_VERSION >= 11]*/
@@ -454,6 +460,23 @@ public final class System {
 		/*[IF JAVA_SPEC_VERSION >= 17] */
 		setSMCallers = Collections.synchronizedMap(new WeakHashMap<>());
 		/*[ENDIF] JAVA_SPEC_VERSION >= 17 */
+
+		/*[IF JAVA_SPEC_VERSION >= 20] */
+		String tmpDir = props.getProperty("java.io.tmpdir"); //$NON-NLS-1$
+		if (!defaultTmpDir.equals(tmpDir)) {
+			try {
+				Field systemProps = SystemProps.class.getDeclaredField("customTmpdir"); //$NON-NLS-1$
+				systemProps.setAccessible(true);
+				systemProps.set(SystemProps.class, tmpDir);
+				if (SystemProps.isBadIoTmpdir()) {
+					System.err.println("WARNING: java.io.tmpdir directory does not exist"); //$NON-NLS-1$
+				}
+			} catch (IllegalAccessException | NoSuchFieldException e) {
+				throw new InternalError(e);
+			}
+		}
+		/*[ENDIF] JAVA_SPEC_VERSION >= 17 */
+		
 	}
 
 native static void startSNMPAgent();
