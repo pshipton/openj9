@@ -1391,41 +1391,6 @@ preloadLibraries(void)
 		exit( -1 ); /* failed */
 	}
 
-	vmDLL = preloadLibrary(vmDllName, TRUE);
-	if (NULL == vmDLL) {
-		fprintf(stderr,"libjvm.so failed to load: %s\n", vmDllName);
-		exit( -1 );	/* failed */
-	}
-
-	globalCreateVM = (CreateVM) dlsym (vmDLL, CREATE_JAVA_VM_ENTRYPOINT );
-	globalGetVMs = (GetVMs) dlsym (vmDLL,  GET_JAVA_VMS_ENTRYPOINT);
-	if ((NULL == globalCreateVM) || (NULL == globalGetVMs)) {
-		dlclose(vmDLL);
-		fprintf(stderr,"libjvm.so failed to load: global entrypoints not found\n");
-		exit( -1 );	/* failed */
-	}
-	j9vm_dllHandle = vmDLL;
-
-#ifdef J9ZOS390
-	/* pre-load libjava.so for IMBZOS functions */
-	javaDLL = preloadLibrary("java", FALSE);
-	if (!javaDLL) {
-	   fprintf(stderr,"libjava.dll failed to load: %s\n", "java");
-	   exit( -1 );     /* failed */
-	}
-	globalGetStringPlatform = (pGetStringPlatform) dlsym (javaDLL,  "IBMZOS_GetStringPlatform");
-	globalGetStringPlatformLength = (pGetStringPlatformLength) dlsym (javaDLL,  "IBMZOS_GetStringPlatformLength");
-	globalNewStringPlatform = (pNewStringPlatform) dlsym (javaDLL,  "IBMZOS_NewStringPlatform");
-	global_a2e_vsprintf = (p_a2e_vsprintf) dlsym (javaDLL,  "IBMZOS_a2e_vsprintf");
-	if (!globalGetStringPlatform || !globalGetStringPlatformLength || !globalNewStringPlatform || !global_a2e_vsprintf) {
-	   dlclose(vmDLL);
-	   dlclose(javaDLL);
-	   fprintf(stderr,"libjava.dll failed to load: global entrypoints not found\n");
-	   exit( -1 );     /* failed */
-	}
-	java_dllHandle = javaDLL;
-#endif
-
 	threadDLL = preloadLibrary(J9_THREAD_DLL_NAME, TRUE);
 	f_threadGlobal = (ThreadGlobal) dlsym (threadDLL, "omrthread_global");
 	f_threadAttachEx = (ThreadAttachEx) dlsym (threadDLL, "omrthread_attach_ex");
@@ -1444,24 +1409,67 @@ preloadLibraries(void)
 	if (!f_threadGlobal || !f_threadAttachEx || !f_threadDetach || !f_monitorEnter || !f_monitorExit || !f_monitorInit || !f_monitorDestroy || !f_monitorWaitTimed
 		|| !f_monitorNotify || !f_monitorNotifyAll || !f_threadLibControl || !f_setCategory || !f_libEnableCPUMonitor || !f_monitorWait
 	) {
-		dlclose(vmDLL);
-#ifdef J9ZOS390
-		dlclose(javaDLL);
-#endif
+		dlclose(omrsigDLL);
 		dlclose(threadDLL);
 		fprintf(stderr,"libjvm.so failed to load: thread library entrypoints not found\n");
 		exit( -1 );	/* failed */
 	}
+
+	vmDLL = preloadLibrary(vmDllName, TRUE);
+	if (NULL == vmDLL) {
+		dlclose(omrsigDLL);
+		dlclose(threadDLL);
+		fprintf(stderr,"libjvm.so failed to load: %s\n", vmDllName);
+		exit( -1 );	/* failed */
+	}
+
+	globalCreateVM = (CreateVM) dlsym (vmDLL, CREATE_JAVA_VM_ENTRYPOINT );
+	globalGetVMs = (GetVMs) dlsym (vmDLL,  GET_JAVA_VMS_ENTRYPOINT);
+	if ((NULL == globalCreateVM) || (NULL == globalGetVMs)) {
+		dlclose(omrsigDLL);
+		dlclose(threadDLL);
+		dlclose(vmDLL);
+		fprintf(stderr,"libjvm.so failed to load: global entrypoints not found\n");
+		exit( -1 );	/* failed */
+	}
+	j9vm_dllHandle = vmDLL;
+
+#ifdef J9ZOS390
+	/* pre-load libjava.so for IMBZOS functions */
+	javaDLL = preloadLibrary("java", FALSE);
+	if (!javaDLL) {
+		dlclose(omrsigDLL);
+		dlclose(threadDLL);
+		dlclose(vmDLL);
+		fprintf(stderr,"libjava.dll failed to load: %s\n", "java");
+		exit( -1 );     /* failed */
+	}
+	globalGetStringPlatform = (pGetStringPlatform) dlsym (javaDLL,  "IBMZOS_GetStringPlatform");
+	globalGetStringPlatformLength = (pGetStringPlatformLength) dlsym (javaDLL,  "IBMZOS_GetStringPlatformLength");
+	globalNewStringPlatform = (pNewStringPlatform) dlsym (javaDLL,  "IBMZOS_NewStringPlatform");
+	global_a2e_vsprintf = (p_a2e_vsprintf) dlsym (javaDLL,  "IBMZOS_a2e_vsprintf");
+	if (!globalGetStringPlatform || !globalGetStringPlatformLength || !globalNewStringPlatform || !global_a2e_vsprintf) {
+		dlclose(omrsigDLL);
+		dlclose(threadDLL);
+		dlclose(vmDLL);
+		dlclose(javaDLL);
+		fprintf(stderr,"libjava.dll failed to load: global entrypoints not found\n");
+		exit( -1 );     /* failed */
+	}
+	java_dllHandle = javaDLL;
+#endif
+
 	portDLL = preloadLibrary(J9_PORT_DLL_NAME, TRUE);
 	portInitLibrary = (PortInitLibrary) dlsym (portDLL, "j9port_init_library");
 	portGetSizeFn = (PortGetSize) dlsym (portDLL, "j9port_getSize");
 	portGetVersionFn = (PortGetVersion) dlsym (portDLL, "j9port_getVersion");
 	if (!portInitLibrary) {
+		dlclose(omrsigDLL);
+		dlclose(threadDLL);
 		dlclose(vmDLL);
 #ifdef J9ZOS390
 		dlclose(javaDLL);
 #endif
-		dlclose(threadDLL);
 		dlclose(portDLL);
 		fprintf(stderr,"libjvm.so failed to load: %s entrypoints not found\n", J9_PORT_DLL_NAME);
 		exit( -1 );	/* failed */
