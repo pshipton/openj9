@@ -219,7 +219,11 @@ isCallerClassJavaNio(J9VMThread *currentThread, J9StackWalkState *walkState)
 		U_8 *data = J9UTF8_DATA(className);
 
 		/* Ignore any methods in Unsafe */
-		if (J9UTF8_LITERAL_EQUALS(data, length, "sun/misc/Unsafe") || J9UTF8_LITERAL_EQUALS(data, length, "jdk/internal/misc/Unsafe")) {
+		if (J9UTF8_LITERAL_EQUALS(data, length, "sun/misc/Unsafe") || J9UTF8_LITERAL_EQUALS(data, length, "jdk/internal/misc/Unsafe")
+#if JAVA_SPEC_VERSION >= 17
+		|| J9UTF8_LITERAL_EQUALS(data, length, "jdk/internal/misc/ScopedMemoryAccess")
+#endif /* JAVA_SPEC_VERSION >= 17 */
+		) {
 			goto done;
 		}
 		if (length >= 9) {
