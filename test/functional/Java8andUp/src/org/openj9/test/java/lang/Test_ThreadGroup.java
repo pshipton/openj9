@@ -236,7 +236,7 @@ public class Test_ThreadGroup {
 		}
 
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
-		ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group destroy");
 		final int DEPTH = 4;
 		final Vector subgroups = buildRandomTreeUnder(testRoot, DEPTH);
 
@@ -430,7 +430,7 @@ public class Test_ThreadGroup {
 	@Test
 	public void test_getMaxPriority() {
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
-		ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group maxPriority");
 
 		boolean passed = true;
 		passed = true;
@@ -454,7 +454,7 @@ public class Test_ThreadGroup {
 	@Test
 	public void test_getName() {
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
-		final String name = "Test group";
+		final String name = "Test group getName";
 		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, name);
 
 		AssertJUnit.assertTrue("Setting a name&getting does not work", testRoot.getName().equals(name));
@@ -482,7 +482,7 @@ public class Test_ThreadGroup {
 		boolean result = wipeSideEffectThreads(originalCurrent);
 		if (result == false)
 			logger.error("wipe threads in test_list() not successful");
-		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group list");
 
 		// First save the original System.out
 		java.io.PrintStream originalOut = System.out;
@@ -531,7 +531,7 @@ public class Test_ThreadGroup {
 
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
-		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group resume");
 		/* [PR 116140] create fewer threads */
 		final int DEPTH = 2;
 		buildRandomTreeUnder(testRoot, DEPTH);
@@ -663,7 +663,7 @@ public class Test_ThreadGroup {
 
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
-		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group stop");
 		/* [PR 116140] create fewer threads */
 		final int DEPTH = 2;
 		buildRandomTreeUnder(testRoot, DEPTH);
@@ -755,7 +755,7 @@ public class Test_ThreadGroup {
 
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
-		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group suspend");
 		/* [PR 116140] create fewer threads */
 		final int DEPTH = 2;
 		buildRandomTreeUnder(testRoot, DEPTH);
@@ -804,7 +804,7 @@ public class Test_ThreadGroup {
 	@Test
 	public void test_toString() {
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
-		final String tGroupName = "Test group";
+		final String tGroupName = "Test group toString";
 
 		// Our own subclass
 		class MyThreadGroup extends ThreadGroup {
@@ -1145,7 +1145,7 @@ public class Test_ThreadGroup {
 		// Test for method void java.lang.ThreadGroup.setDaemon(boolean)
 
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
-		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
+		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group daemon");
 
 		testRoot.setDaemon(true);
 		AssertJUnit.assertTrue("Setting daemon&getting does not work", testRoot.isDaemon());
@@ -1200,7 +1200,7 @@ public class Test_ThreadGroup {
 
 		for (int i = 0; i < children.length; i++) {
 			ok = ok && wipeSideEffectThreads(children[i]);
-			if (children[i].getName().equals("Test Group") || children[i].getName().equals("foo")
+			if (children[i].getName().startsWith("Test Group") || children[i].getName().equals("foo")
 					|| children[i].getName().equals("jp"))
 				children[i].destroy();
 		}
@@ -1209,6 +1209,10 @@ public class Test_ThreadGroup {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
 		}
+
+		// Allow unused ThreadGroups to be collected
+		for (int i=0; i<32; i++) System.gc();
+
 		return ok;
 	}
 
@@ -1264,11 +1268,11 @@ public class Test_ThreadGroup {
 		if (thirdIndex != -1)
 			return false;
 
-		//There should be onlyone thread called "Test group" in the list
-		int fourthIndex = listOutput.indexOf("Test group");
+		//There should be only one thread called "Test group list" in the list
+		int fourthIndex = listOutput.indexOf("Test group list");
 		if (fourthIndex == -1)
 			return false;
-		int fifthIndex = listOutput.indexOf("Test group", fourthIndex + 1);
+		int fifthIndex = listOutput.indexOf("Test group list", fourthIndex + 1);
 		if (fifthIndex != -1)
 			return false;
 
@@ -1375,6 +1379,12 @@ public class Test_ThreadGroup {
 	}
 
 	private boolean wipeThread(Thread t) {
+		if (VersionCheck.major() >= 21) {
+			// stop() is supported by jdk21+.
+			System.out.println("Still running: " + t);
+			return false;
+		}
+
 		// this method does not exist in xtrem
 		// if (!t.isAlive()) t.start(); // If not started yet, we do so
 		// t.resume(); // Just in case, we resume it. Maybe this should be done
