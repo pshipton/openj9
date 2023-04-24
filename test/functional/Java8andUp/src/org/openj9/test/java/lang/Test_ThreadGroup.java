@@ -1211,7 +1211,7 @@ public class Test_ThreadGroup {
 		}
 
 		// Allow unused ThreadGroups to be collected
-		for (int i=0; i<32; i++) System.gc();
+		for (int i=0; i<36; i++) System.gc();
 
 		return ok;
 	}
