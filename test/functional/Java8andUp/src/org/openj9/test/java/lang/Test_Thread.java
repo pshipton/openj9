@@ -963,10 +963,16 @@ public class Test_Thread {
 		} catch (InterruptedException e) {
 		}
 		o = null;
+		if (VersionCheck.major() >= 21) {
+			// Allow the Thread to be garbage collected.
+			t = null;
+		}
 		System.gc();
 		AssertJUnit.assertTrue("runnable was not collected", ref.get() == null);
-		// must keep a reference to the Thread so it doesn't go out of scope
-		AssertJUnit.assertTrue("null Thread", t != null);
+		if (VersionCheck.major() < 21) {
+			// must keep a reference to the Thread so it doesn't go out of scope
+			AssertJUnit.assertTrue("null Thread", t != null);
+		}
 	}
 
 	/**
@@ -1118,6 +1124,11 @@ public class Test_Thread {
 	 */
 	@Test
 	public void test_toString() {
+		if (VersionCheck.major() >= 21) {
+			// Testing OpenJDK Thread.toString() for OpenJ9 is unnecessary.
+			return;
+		}
+
 		ThreadGroup tg = new ThreadGroup("Test Group5");
 		st = new Thread(tg, new SimpleThread(1), "SimpleThread17");
 		final String stString = st.toString();

@@ -109,9 +109,10 @@ public class Test_ThreadGroup {
 	@Test
 	public void test_remove() {
 		if (VersionCheck.major() >= 21) {
-			/* This test hangs on jdk21. */
+			// This test hangs on jdk21+, ThreadGroups are garbage collected when they contain no more Threads.
 			return;
 		}
+
 		/*
 		 * [PR CMVC 114880] ThreadGroup is not notified when all threads
 		 * complete
@@ -178,13 +179,15 @@ public class Test_ThreadGroup {
 		// Lets start all over
 		newGroup.destroy();
 
-		try {
-			newGroup = new ThreadGroup(newGroup, "a name here");
-		} catch (IllegalThreadStateException e) {
-			newGroup = null;
+		if (VersionCheck.major() < 21) {
+			// In jdk21+ destroy() does nothing. ThreadGroups are garbage collected rather than destroyed.
+			try {
+				newGroup = new ThreadGroup(newGroup, "a name here");
+			} catch (IllegalThreadStateException e) {
+				newGroup = null;
+			}
+			AssertJUnit.assertTrue("Can't create a subgroup of a destroyed group", newGroup == null);
 		}
-		;
-		AssertJUnit.assertTrue("Can't create a subgroup of a destroyed group", newGroup == null);
 	}
 
 	/**
@@ -216,7 +219,10 @@ public class Test_ThreadGroup {
 			t1.join();
 		} catch (InterruptedException e) {
 		}
-		AssertJUnit.assertTrue("group not destroyed", tg.isDestroyed());
+		if (VersionCheck.major() < 21) {
+			// In jdk21+ ThreadGroups are garbage collected rather than destroyed, isDestroyed() always return false.
+			AssertJUnit.assertTrue("group not destroyed", tg.isDestroyed());
+		}
 	}
 
 	/**
@@ -224,6 +230,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_destroy() {
+		if (VersionCheck.major() >= 21) {
+			// destroy() has no action in jdk21+, ThreadGroups are garbage collected rather than destroyed.
+			return;
+		}
+
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 		ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
 		final int DEPTH = 4;
@@ -358,6 +369,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_destroy2() {
+		if (VersionCheck.major() >= 21) {
+			// destroy() has no action in jdk21+, ThreadGroups are garbage collected rather than destroyed.
+			return;
+		}
+
 		/*
 		 * [PR 115667, CMVC 94448] check if ThreadGroup destroyed when creating
 		 * Thread
@@ -508,6 +524,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_resume() throws OutOfMemoryError {
+		if (VersionCheck.major() >= 21) {
+			// resume() throws UnsupportedOperationException in jdk21+.
+			return;
+		}
+
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
 		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
@@ -602,6 +623,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_setDaemon2() {
+		if (VersionCheck.major() >= 21) {
+			// setDaemon() does nothing in jdk21+, ThreadGroups are garbage collected rather than destroyed.
+			return;
+		}
+
 		/*
 		 * [PR CMVC 99507] Do not destroy daemon group if threads have been
 		 * added but not started
@@ -630,6 +656,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_stop() throws OutOfMemoryError {
+		if (VersionCheck.major() >= 21) {
+			// stop() throws UnsupportedOperationException in jdk21+, Threads and ThreadGroups cannot be stopped.
+			return;
+		}
+
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
 		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
@@ -717,6 +748,11 @@ public class Test_ThreadGroup {
 	 */
 	@Test
 	public void test_suspend() throws OutOfMemoryError {
+		if (VersionCheck.major() >= 21) {
+			// suspend() throws UnsupportedOperationException in jdk21+.
+			return;
+		}
+
 		final ThreadGroup originalCurrent = getInitialThreadGroup();
 
 		final ThreadGroup testRoot = new ThreadGroup(originalCurrent, "Test group");
@@ -841,6 +877,9 @@ public class Test_ThreadGroup {
 			public void run() {
 				while (true) {
 					Thread.yield();
+					if (Thread.currentThread().isInterrupted()) {
+						throw new ThreadDead("thread was interrupted");
+					}
 				}
 			}
 		};
@@ -850,13 +889,17 @@ public class Test_ThreadGroup {
 		} catch (InterruptedException ie) {
 			AssertJUnit.assertTrue("Should not have been interrupted", false);
 		}
-		thread.stop(); // we know this is deprecated, but we must test this
-		// scenario
-		// When we stop a thread, it is tagged as not alive even though it is
-		// still running code.
-		// join would be a no-op, and we might have a race condition. So, to
-		// play safe, we wait before joining & testing
-		// if the exception was really forwarded to the ThreadGroup
+		if (VersionCheck.major() >= 21) {
+			thread.interrupt();
+		} else {
+			thread.stop(); // we know this is deprecated, but we must test this
+			// scenario
+			// When we stop a thread, it is tagged as not alive even though it is
+			// still running code.
+			// join would be a no-op, and we might have a race condition. So, to
+			// play safe, we wait before joining & testing
+			// if the exception was really forwarded to the ThreadGroup
+		}
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException ie) {
