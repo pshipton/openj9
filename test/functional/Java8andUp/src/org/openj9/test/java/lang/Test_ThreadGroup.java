@@ -878,7 +878,7 @@ public class Test_ThreadGroup {
 				while (true) {
 					Thread.yield();
 					if (Thread.currentThread().isInterrupted()) {
-						throw new ThreadDead("thread was interrupted");
+						throw new ThreadDeath("thread was interrupted");
 					}
 				}
 			}
