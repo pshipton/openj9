@@ -907,6 +907,10 @@ extern "C" {
 #define J9TR_FLAT_RESOLVE_GETFIELD 1
 #define J9TR_FLAT_RESOLVE_PUTFIELD 2
 
+/* Constants for J9VM_OPT_JAVA_OFFLOAD_SUPPORT */
+#define J9_OFFLOAD_NATIVE_LIBRARY_TAG 1
+#define J9_OFFLOAD_SWITCHING_FUNCTION_MASK 7
+
 #ifdef __cplusplus
 }
 #endif

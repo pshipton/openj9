@@ -45,6 +45,7 @@
 #include "ut_j9scar.h"
 #include "j9vmnls.h"
 
+extern J9JavaVM *BFUjavaVM;
 extern void initializeVMI(void);
 
 #define POK_BOOLEAN 4
@@ -2338,6 +2339,18 @@ jobject JNICALL JVM_UnloadLibrary(jint arg0)
 {
 #if JAVA_SPEC_VERSION >= 15
 	Trc_SC_UnloadLibrary_Entry(handle);
+
+#if JAVA_SPEC_VERSION >= 17
+	if (J9_ARE_ALL_BITS_SET((UDATA)handle, J9_OFFLOAD_NATIVE_LIBRARY_TAG)) {
+		J9NativeLibrary *nativeLib = (J9NativeLibrary *)(((UDATA)handle) ^ J9_OFFLOAD_NATIVE_LIBRARY_TAG);
+		PORT_ACCESS_FROM_JAVAVM(BFUjavaVM);
+		handle = (void *)(nativeLib->handle);
+		j9mem_free_memory(nativeLib->name);
+		j9mem_free_memory(nativeLib);
+		nativeLib = NULL;
+	}
+#endif /* JAVA_SPEC_VERSION >= 17 */
+
 #if defined(WIN32)
 	FreeLibrary((HMODULE)handle);
 #elif defined(J9UNIX) || defined(J9ZOS390) /* defined(WIN32) */

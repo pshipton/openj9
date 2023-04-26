@@ -440,4 +440,7 @@ J9InternalVMFunctions J9InternalFunctions = {
 	releaseVThreadInspector,
 #endif /* JAVA_SPEC_VERSION >= 19 */
 	checkArgsConsumed,
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
+	validateLibrary,
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 };
