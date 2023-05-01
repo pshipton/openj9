@@ -376,7 +376,9 @@ if(NOT JAVA_SPEC_VERSION LESS 17)
 	jvm_add_exports(jvm
 		JVM_DumpClassListToFile
 		JVM_DumpDynamicArchive
+if(J9VM_OPT_JAVA_OFFLOAD_SUPPORT)
 		JVM_ValidateJNILibrary
+endif()
 	)
 endif()
 

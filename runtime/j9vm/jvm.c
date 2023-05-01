@@ -3998,6 +3998,7 @@ JVM_LoadLibrary(const char *libName, jboolean throwOnFailure)
 }
 
 
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 /**
  * Validates the JNI library for offload.
  * If successful, returns a library handle which may be modified from the handle passed in,
@@ -4014,14 +4015,13 @@ void * JNICALL
 JVM_ValidateJNILibrary(const char *libName, const void *handle)
 {
 	void *result = NULL;
-#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 	J9NativeLibrary *nativeLib = NULL;
 	PORT_ACCESS_FROM_JAVAVM(BFUjavaVM);
 
 	Trc_SC_ValidateJNILibrary_Entry(libName, handle);
 	
 	/* If the library is already validated, just return it. */
-	if (J9_ARE_ALL_BITS_SET((UDATA)handle, J9_OFFLOAD_NATIVE_LIBRARY_TAG) {
+	if (J9_ARE_ALL_BITS_SET((UDATA)handle, J9_OFFLOAD_NATIVE_LIBRARY_TAG)) {
 		return handle;
 	}
 
@@ -4042,9 +4042,9 @@ JVM_ValidateJNILibrary(const char *libName, const void *handle)
 		JVM_UnloadLibrary((void *)handle);
 	}
 	Trc_SC_ValidateJNILibrary_Exit(result);
-#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 	return result;
 }
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 
 
 /**
