@@ -4014,10 +4014,11 @@ void * JNICALL
 JVM_ValidateJNILibrary(const char *libName, const void *handle)
 {
 	void *result = NULL;
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 	J9NativeLibrary *nativeLib = NULL;
 	PORT_ACCESS_FROM_JAVAVM(BFUjavaVM);
 
-	// TODO - add some tracepoints
+	Trc_SC_ValidateJNILibrary_Entry(libName, handle);
 	
 	/* If the library is already validated, just return it. */
 	if (J9_ARE_ALL_BITS_SET((UDATA)handle, J9_OFFLOAD_NATIVE_LIBRARY_TAG) {
@@ -4034,14 +4035,14 @@ JVM_ValidateJNILibrary(const char *libName, const void *handle)
 		} else {
 			strcpy(nativeLib->name, libName);
 			result = (void *)(((UDATA)nativeLib) | J9_OFFLOAD_NATIVE_LIBRARY_TAG);
-#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT)
 			BFUjavaVM->internalVMFunctions->validateLibrary(BFUjavaVM, nativeLib);
-#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) */
 		}
 	}
 	if (NULL == result) {
 		JVM_UnloadLibrary((void *)handle);
 	}
+	Trc_SC_ValidateJNILibrary_Exit(result);
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 	return result;
 }
 
@@ -4065,14 +4066,14 @@ void* JNICALL
 JVM_FindLibraryEntry(void* handle, const char *functionName)
 {
 	void *result = NULL;
-#if JAVA_SPEC_VERSION >= 17
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 	J9NativeLibrary *nativeLib = NULL;
 	BOOLEAN decorate = FALSE;
-#endif /* JAVA_SPEC_VERSION >= 17 */
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 
 	Trc_SC_FindLibraryEntry_Entry(handle, functionName);
 
-#if JAVA_SPEC_VERSION >= 17
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 	if (J9_ARE_ALL_BITS_SET((UDATA)handle, J9_OFFLOAD_NATIVE_LIBRARY_TAG)) {
 		nativeLib = (J9NativeLibrary *)(((UDATA)handle) ^ J9_OFFLOAD_NATIVE_LIBRARY_TAG);
 		handle = (void *)(nativeLib->handle);
@@ -4080,7 +4081,7 @@ JVM_FindLibraryEntry(void* handle, const char *functionName)
 		decorate = !strncmp(JNI_PREFIX, functionName, LITERAL_STRLEN(JNI_PREFIX));
 #undef JNI_PREFIX
 	}
-#endif /* JAVA_SPEC_VERSION >= 17 */
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 
 #if defined(WIN32)
 	result = GetProcAddress ((HINSTANCE)handle, (LPCSTR)functionName);
@@ -4090,21 +4091,16 @@ JVM_FindLibraryEntry(void* handle, const char *functionName)
 #error "Please implement jvm.c:JVM_FindLibraryEntry(void* handle, const char *functionName)"
 #endif /* defined(WIN32) */
 
-#if JAVA_SPEC_VERSION >= 17
+#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17)
 	/* Ensure no valid address has switching bits set. */
 	Assert_SC_true(J9_ARE_NO_BITS_SET((UDATA)result, J9_OFFLOAD_SWITCHING_FUNCTION_MASK));
 	if ((NULL != result) && decorate) {
-#if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT)
 		UDATA newResult = ((UDATA)result) | nativeLib->doSwitching;
 		/*  Ensure there are no switching bits out of range of the mask. */
 		Assert_SC_true(result == (newResult & ~(UDATA)J9_OFFLOAD_SWITCHING_FUNCTION_MASK));
 		result = (void *)newResult;
-#else
-		// this is for Linux testing purposes only, the final code will only tag with the doSwitching bits on z/OS
-		result = (void *)(((UDATA)result) | J9_OFFLOAD_SWITCHING_FUNCTION_MASK);
-#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) */
 	}
-#endif /* JAVA_SPEC_VERSION >= 17 */
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) && (JAVA_SPEC_VERSION >= 17) */
 
 	Trc_SC_FindLibraryEntry_Exit(result);
 

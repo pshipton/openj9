@@ -1116,8 +1116,8 @@ lookupJNINative(J9VMThread *currentThread, J9NativeLibrary *nativeLibrary, J9Met
 			functionAddress = (UDATA*)(*(U_64*)&(currentThread->returnValue));
 #if defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT)
 			doSwitching = ((UDATA)functionAddress) & J9_OFFLOAD_SWITCHING_FUNCTION_MASK;
-#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) */
 			functionAddress = (UDATA *)(((UDATA)functionAddress) & ~((UDATA)J9_OFFLOAD_SWITCHING_FUNCTION_MASK));
+#endif /* defined(J9VM_OPT_JAVA_OFFLOAD_SUPPORT) */
 		}
 		/* always clear pending exception, might retry later */
 		VM_VMHelpers::clearException(currentThread);
