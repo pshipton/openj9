@@ -3943,6 +3943,7 @@ JVM_LoadLibrary(const char *libName, jboolean throwOnFailure)
 #endif /* JAVA_SPEC_VERSION < 11 */
 {
 	void *result = NULL;
+	BOOLEAN attemptedLoad = FALSE;
 	J9JavaVM *javaVM = (J9JavaVM *)BFUjavaVM;
 	PORT_ACCESS_FROM_JAVAVM(javaVM);
 
@@ -3968,12 +3969,18 @@ JVM_LoadLibrary(const char *libName, jboolean throwOnFailure)
 			UDATA handle = 0;
 			UDATA flags = J9_ARE_ANY_BITS_SET(javaVM->extendedRuntimeFlags, J9_EXTENDED_RUNTIME_LAZY_SYMBOL_RESOLUTION) ? J9PORT_SLOPEN_LAZY : 0;
 			UDATA slOpenResult = j9sl_open_shared_library((char *)libName, &handle, flags);
-
 			Trc_SC_LoadLibrary_OpenShared(libName);
+			attemptedLoad = TRUE;
+
+/* jdk17+ calls JVM_LoadLibrary with decorated library names. If the following is done
+ * then it overwrites the real error with a failure to load "liblib<name>.so.so".
+ */
+#if JAVA_SPEC_VERSION < 17
 			if (0 != slOpenResult) {
 				slOpenResult = j9sl_open_shared_library((char *)libName, &handle, flags | J9PORT_SLOPEN_DECORATE);
 				Trc_SC_LoadLibrary_OpenShared_Decorate(libName);
 			}
+#endif /* JAVA_SPEC_VERSION < 17 */
 			if (0 == slOpenResult) {
 				result = (void *)handle;
 			}
@@ -3991,10 +3998,35 @@ JVM_LoadLibrary(const char *libName, jboolean throwOnFailure)
 		JavaVM *vm = (JavaVM *)javaVM;
 		(*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_2);
 		if (NULL != env) {
-			char errMsg[512];
-			jio_snprintf(errMsg, sizeof(errMsg), "Failed to load library \"%s\"", libName);
-			errMsg[sizeof(errMsg) - 1] = '\0';
+			char errBuf[512];
+			char *errMsg = errBuf;
+			int bufSize = sizeof(errBuf);
+			const char *portMsg = attemptedLoad ? j9error_last_error_message() : "";
+			if ('\0' != *portMsg) {
+				/* The port library message includes the file name which failed to load. */
+				bufSize = jio_snprintf(errMsg, bufSize, "Failed to load library %s", portMsg);
+			} else {
+				bufSize = jio_snprintf(errMsg, bufSize, "Failed to load library \"%s\"", libName);
+			}
+			errBuf[sizeof(errBuf) - 1] = '\0';
+			bufSize += 1;
+			if (bufSize > sizeof(errBuf)) {
+				errMsg = (char *)j9mem_allocate_memory(bufSize, OMRMEM_CATEGORY_VM);
+				if (NULL != errMsg) {
+					if ('\0' != *portMsg) {
+						/* The port library message includes the file name which failed to load. */
+						jio_snprintf(errMsg, bufSize, "Failed to load library %s", portMsg);
+					} else {
+						jio_snprintf(errMsg, bufSize, "Failed to load library \"%s\"", libName);
+					}
+				} else {
+					errMsg = errBuf;
+				}
+			}
 			throwNewUnsatisfiedLinkError(env, errMsg);
+			if (errBuf != errMsg) {
+				j9mem_free_memory(errMsg);
+			}
 		}
 	}
 #endif /* JAVA_SPEC_VERSION >= 17 */
