@@ -40,7 +40,7 @@ Java_sun_misc_Perf_registerNatives(JNIEnv *env, jclass klass)
 jobject JNICALL
 Java_sun_misc_Perf_attach(JNIEnv *env, jobject perf, jstring user, jint lvmid, jint mode)
 {
-	assert(!"Java_sun_misc_Perf_attach unimplemented");
+	throwNewInternalError(env, "Java_sun_misc_Perf_attach unimplemented");
 	return NULL;
 }
 
@@ -98,7 +98,7 @@ Java_sun_misc_Perf_highResFrequency(JNIEnv *env, jobject perf)
 jobject JNICALL
 Java_jdk_internal_perf_Perf_attach0(JNIEnv *env, jobject perf, jint lvmid)
 {
-	assert(!"Java_jdk_internal_perf_Perf_attach0 unimplemented");
+	throwNewInternalError(env, "Java_jdk_internal_perf_Perf_attach0 unimplemented");
 	return NULL;
 }
 #endif /* JAVA_SPEC_VERSION >= 19 */
