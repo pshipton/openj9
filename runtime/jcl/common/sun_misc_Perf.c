@@ -23,6 +23,7 @@
 #include <assert.h>
 #include "jcl.h"
 #include "jcl_internal.h"
+#include "jclprots.h"
 
 /*
  * This is the minimum implementation of sun.misc.Perf natives to
