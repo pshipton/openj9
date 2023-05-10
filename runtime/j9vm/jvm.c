@@ -3945,6 +3945,7 @@ JVM_LoadLibrary(const char *libName, jboolean throwOnFailure)
 	void *result = NULL;
 	J9JavaVM *javaVM = (J9JavaVM *)BFUjavaVM;
 	PORT_ACCESS_FROM_JAVAVM(javaVM);
+	fprintf(stderr, "JVM_LoadLibrary %s\n", libName);
 
 #if defined(WIN32)
 #if JAVA_SPEC_VERSION >= 17
