@@ -104,6 +104,7 @@ public class ClassFileCompare {
 	
 	private void reportDifference(String message) {
 		diffCount++;
+		System.out.println(message);
 		logger.warning(message);
 	}
 
