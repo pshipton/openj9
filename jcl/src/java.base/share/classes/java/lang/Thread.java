@@ -914,7 +914,7 @@ private synchronized static String newName() {
 		Throwable t = new Throwable();
 		t.printStackTrace(pw);
 		pw.flush();
-		if (!sw.getBuffer().contains("UncaughtExitSimulator")) {
+		if (!sw.toString().contains("UncaughtExitSimulator")) {
 			t.printStackTrace();
 		}
 	}
