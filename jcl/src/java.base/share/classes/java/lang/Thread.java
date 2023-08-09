@@ -906,7 +906,18 @@ public final synchronized void join(long timeoutInMilliseconds, int nanos) throw
  */
 private synchronized static String newName() {
 	/*[PR 97331] Initial thread name should be Thread-0 */
-	return "Thread-" + createCount++; //$NON-NLS-1$
+	String newName = "Thread-" + createCount++; //$NON-NLS-1$
+	if (createCount == 1) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		Throwable t = new Throwable();
+		t.printStackTrace(pw);
+		pw.flush();
+		if (!sw.getBuffer().contains("UncaughtExitSimulator")) {
+			t.printStackTrace();
+		}
+	}
+	return newName;
 }
 
 /**
