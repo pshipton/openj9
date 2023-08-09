@@ -40,6 +40,7 @@ import sun.reflect.CallerSensitive;
 /*[ENDIF] JAVA_SPEC_VERSION >= 11 */
 import sun.nio.ch.Interruptible;
 import sun.security.util.SecurityConstants;
+import java.io.*;
 
 /**
  *	A Thread is a unit of concurrent execution in Java. It has its own call stack
