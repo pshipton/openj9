@@ -77,12 +77,6 @@ J9::Power::CodeGenerator::initialize()
       cg->setSupportsInlineConcurrentLinkedQueue();
       }
 
-   static bool disableInlineVectorizedMismatch = feGetEnv("TR_disableInlineVectorizedMismatch") != NULL;
-   if (cg->getSupportsArrayCmpLen() && !disableInlineVectorizedMismatch)
-      {
-      cg->setSupportsInlineVectorizedMismatch();
-      }
-
    cg->setSupportsNewInstanceImplOpt();
 
    static char *disableMonitorCacheLookup = feGetEnv("TR_disableMonitorCacheLookup");
