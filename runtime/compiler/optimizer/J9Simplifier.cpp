@@ -362,11 +362,9 @@ J9::Simplifier::simplifylCallMethods(TR::Node * node, TR::Block * block)
 //
 //   to:
 //
-// <new tree>
-//    lcall currentTimeMaxPrecision
 // <tree>
 //    ldiv
-//      ==>lcall currentTimeMaxPrecision
+//      lcall currentTimeMaxPrecision
 //      lconst <divisor value>
 TR::Node *J9::Simplifier::convertCurrentTimeMillis(TR::Node * node, TR::Block * block)
    {
@@ -388,7 +386,6 @@ TR::Node *J9::Simplifier::convertCurrentTimeMillis(TR::Node * node, TR::Block * 
       divConstNode->setLongInt(OMRPORT_TIME_HIRES_MILLITIME_DIVISOR);
 
       TR::Node::recreate(node, TR::ldiv);
-      callTreeTop->insertBefore(TR::TreeTop::create(comp(), TR::Node::create(node, TR::treetop, 1, lcallNode)));
       node->setNumChildren(2);
       node->setAndIncChild(0, lcallNode);
 
