@@ -202,7 +202,7 @@ void TR_EscapeAnalysisTools::processSymbolReferences(TR_Array<List<TR::SymbolRef
                   if ((definingSym->isAuto() || definingSym->isParm())
                       && (deadSymRefs == NULL || !deadSymRefs->isSet(definingSymRefNum)))
                      {
-                     symRefsToLoad.set(definingSymRefNum);
+                     symRefsToLoad.set(symRefNum);
 
                      if (_comp->trace(OMR::escapeAnalysis) || _comp->getOption(TR_TraceOSR))
                         {
