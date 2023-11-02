@@ -211,7 +211,7 @@ SOLINK_CMD?=$(LINK)
 
 SOLINK_FLAGS+=-nologo -nodefaultlib -incremental:no -debug
 SOLINK_LIBPATH+=$(PRODUCT_LIBPATH)
-SOLINK_SLINK+=$(PRODUCT_SLINK) j9thr j9hookable kernel32 oldnames msvcrt msvcprt ws2_32
+SOLINK_SLINK+=$(PRODUCT_SLINK) j9thr j9hookable kernel32 oldnames msvcrt msvcprt ws2_32 user32 gdi32 winspool shell32 ole32 oleaut32 uuid comdlg32 advapi32
 
 ifeq ($(origin MSVC_VERSION), undefined)
     ifneq (,$(filter 14.0 15.0, $(VisualStudioVersion)))
