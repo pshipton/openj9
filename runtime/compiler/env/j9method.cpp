@@ -7994,7 +7994,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
                "type",             "Ljava/lang/invoke/MethodType;"),
                "methodDescriptor", "Ljava/lang/String;");
             methodDescriptorLength = fej9->getStringUTF8Length(methodDescriptorRef);
-            methodDescriptor = (char*)alloca(methodDescriptorLength+1);
+            methodDescriptor = (char*)__builtin_alloca(methodDescriptorLength+1);
             fej9->getStringUTF8(methodDescriptorRef, methodDescriptor, methodDescriptorLength+1);
             }
 
@@ -8195,7 +8195,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
                "type",             "Ljava/lang/invoke/MethodType;"),
                "methodDescriptor", "Ljava/lang/String;");
             methodDescriptorLength = fej9->getStringUTF8Length(methodDescriptorRef);
-            methodDescriptor = (char*)alloca(methodDescriptorLength+1);
+            methodDescriptor = (char*)__builtin_alloca(methodDescriptorLength+1);
             fej9->getStringUTF8(methodDescriptorRef, methodDescriptor, methodDescriptorLength+1);
             }
 
@@ -8304,7 +8304,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
                "type",             "Ljava/lang/invoke/MethodType;"),
                "methodDescriptor", "Ljava/lang/String;");
             methodDescriptorLength = fej9->getStringUTF8Length(methodDescriptorRef);
-            nextHandleSignature = (char*)alloca(methodDescriptorLength+1);
+            nextHandleSignature = (char*)__builtin_alloca(methodDescriptorLength+1);
             fej9->getStringUTF8(methodDescriptorRef, nextHandleSignature, methodDescriptorLength+1);
             }
 
@@ -8785,7 +8785,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
 
          // Construct the signature string for the array class
          //
-         char *arrayClassSignature = (char*)alloca(arity + leafClassNameLength + 3); // 3 = 'L' + ';' + null terminator
+         char *arrayClassSignature = (char*)__builtin_alloca(arity + leafClassNameLength + 3); // 3 = 'L' + ';' + null terminator
          memset(arrayClassSignature, '[', arity);
          if (isPrimitiveClass)
             {
@@ -9129,7 +9129,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
 
             uintptr_t methodDescriptorRef = fej9->getReferenceField(finallyType, "methodDescriptor", "Ljava/lang/String;");
             int methodDescriptorLength = fej9->getStringUTF8Length(methodDescriptorRef);
-            methodDescriptor = (char*)alloca(methodDescriptorLength+1);
+            methodDescriptor = (char*)__builtin_alloca(methodDescriptorLength+1);
             fej9->getStringUTF8(methodDescriptorRef, methodDescriptor, methodDescriptorLength+1);
             }
 
@@ -9315,7 +9315,7 @@ TR_J9ByteCodeIlGenerator::runFEMacro(TR::SymbolReference *symRef)
                "type",             "Ljava/lang/invoke/MethodType;"),
                "methodDescriptor", "Ljava/lang/String;");
             intptr_t methodDescriptorLength = fej9->getStringUTF8Length(methodDescriptorRef);
-            nextSignature = (char*)alloca(methodDescriptorLength+1);
+            nextSignature = (char*)__builtin_alloca(methodDescriptorLength+1);
             fej9->getStringUTF8(methodDescriptorRef, nextSignature, methodDescriptorLength+1);
             }
 

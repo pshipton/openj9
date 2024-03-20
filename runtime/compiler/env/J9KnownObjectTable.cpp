@@ -474,7 +474,7 @@ J9::KnownObjectTable::dumpTo(TR::FILE *file, TR::Compilation *comp)
             // Collect field info and determine which objects are reachable from other objects
             //
             TR_BitVector reachable(endIndex, comp->trMemory(), stackAlloc, notGrowable);
-            TR_VMFieldsInfo **fieldsInfoByIndex = (TR_VMFieldsInfo**)alloca(endIndex * sizeof(TR_VMFieldsInfo*));
+            TR_VMFieldsInfo **fieldsInfoByIndex = (TR_VMFieldsInfo**)__builtin_alloca(endIndex * sizeof(TR_VMFieldsInfo*));
             for (i = 1; i < endIndex; i++)
                {
                uintptr_t    object = self()->getPointer(i);

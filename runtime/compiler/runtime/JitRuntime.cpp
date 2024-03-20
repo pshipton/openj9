@@ -1451,7 +1451,7 @@ static void printMethodHandleArgs(j9object_t methodHandle, void **stack, J9VMThr
 
    uintptr_t sigObject = fej9->methodType_descriptor(fej9->methodHandle_type((uintptr_t)methodHandle));
    intptr_t  sigLength = fej9->getStringUTF8Length(sigObject);
-   char *sig = (char*)alloca(sigLength+1);
+   char *sig = (char*)__builtin_alloca(sigLength+1);
    fej9->getStringUTF8(sigObject, sig, sigLength+1);
 
    if (vlogTag)
@@ -1579,7 +1579,7 @@ uint8_t *compileMethodHandleThunk(j9object_t methodHandle, j9object_t arg, J9VMT
       uintptr_t methodType       = fej9->methodHandle_type((uintptr_t)methodHandle);
       uintptr_t descriptorObject = fej9->methodType_descriptor(methodType);
       intptr_t  descriptorLength = fej9->getStringUTF8Length(descriptorObject);
-      char      *descriptorNTS    = (char*)alloca(descriptorLength+1); // NTS = null-terminated string
+      char      *descriptorNTS    = (char*)__builtin_alloca(descriptorLength+1); // NTS = null-terminated string
       fej9->getStringUTF8(descriptorObject, descriptorNTS, descriptorLength+1);
       TR_VerboseLog::writeLineLocked(TR_Vlog_MHD, "%p   %.*s %p hash %x type %p %s", vmThread, classNameLength, className, methodHandle, hashCode, methodType, descriptorNTS);
       }
@@ -1609,7 +1609,7 @@ uint8_t *compileMethodHandleThunk(j9object_t methodHandle, j9object_t arg, J9VMT
          {
          uintptr_t thunkableSignatureString = fej9->methodHandle_thunkableSignature((uintptr_t)methodHandle);
          intptr_t  thunkableSignatureLength = fej9->getStringUTF8Length(thunkableSignatureString);
-         char *thunkSignature = (char*)alloca(thunkableSignatureLength+1);
+         char *thunkSignature = (char*)__builtin_alloca(thunkableSignatureLength+1);
          fej9->getStringUTF8(thunkableSignatureString, thunkSignature, thunkableSignatureLength+1);
          TR_VerboseLog::writeLineLocked(TR_Vlog_MHD, "%p   Looking up archetype for class %.*s signature %s", vmThread, classNameLength, className, thunkSignature);
          }
@@ -1702,7 +1702,7 @@ void *initialInvokeExactThunk(j9object_t methodHandle, J9VMThread *vmThread)
 
    uintptr_t thunkableSignatureString = fej9->methodHandle_thunkableSignature((uintptr_t)methodHandle);
    intptr_t  thunkableSignatureLength = fej9->getStringUTF8Length(thunkableSignatureString);
-   char *thunkSignature = (char*)alloca(thunkableSignatureLength+1);
+   char *thunkSignature = (char*)__builtin_alloca(thunkableSignatureLength+1);
    fej9->getStringUTF8(thunkableSignatureString, thunkSignature, thunkableSignatureLength+1);
 
    uintptr_t thunkTuple = fej9->getReferenceField((uintptr_t)methodHandle, "thunks", "Ljava/lang/invoke/ThunkTuple;");
@@ -1716,7 +1716,7 @@ void *initialInvokeExactThunk(j9object_t methodHandle, J9VMThread *vmThread)
       uintptr_t methodType       = fej9->methodHandle_type((uintptr_t)methodHandle);
       uintptr_t descriptorObject = fej9->methodType_descriptor(methodType);
       intptr_t  descriptorLength = fej9->getStringUTF8Length(descriptorObject);
-      char      *descriptorNTS    = (char*)alloca(descriptorLength+1); // NTS = null-terminated string
+      char      *descriptorNTS    = (char*)__builtin_alloca(descriptorLength+1); // NTS = null-terminated string
       fej9->getStringUTF8(descriptorObject, descriptorNTS, descriptorLength+1);
       TR_VerboseLog::writeLineLocked(TR_Vlog_MHD, "%p   %.*s %p hash %x type %p %s", vmThread, classNameLength, className, methodHandle, hashCode, methodType, descriptorNTS);
       TR_VerboseLog::writeLineLocked(TR_Vlog_MHD, "%p   ThunkTuple %p thunkableSignature: %s", vmThread, thunkTuple, thunkSignature);
