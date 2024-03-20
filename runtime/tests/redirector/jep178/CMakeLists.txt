@@ -34,7 +34,7 @@ if(OMR_OS_LINUX)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -rdynamic")
     endif()
 elseif(OMR_OS_AIX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qpic -brtl -bexpall")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpic -brtl -bexpall")
 endif()
 
 j9vm_add_executable(testjep178_static

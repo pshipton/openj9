@@ -55,7 +55,7 @@ endif
 ifeq ($(j9vm_env_data64),1)
   UMA_ASPP_DEBUG += -g
   UMA_LIB_LINKER_FLAGS += -X64
-  UMA_CC_MODE += -q64
+  UMA_CC_MODE += -m64
 else
   UMA_ASPP_DEBUG += $(VMASMDEBUG)
   UMA_LIB_LINKER_FLAGS += -X32
@@ -102,9 +102,8 @@ ifeq (,$(findstring xlclang,$(notdir $(CC))))
   CFLAGS += -q mbcs -qinfo=pro
 else
  # xlclang options
-  CFLAGS += -qxlcompatmacros
 endif
-CFLAGS += -qlanglvl=extended -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108 -qstackprotect
+CFLAGS += -std=c89 -qarch=ppc -fno-strict-aliasing -fstack-protector
 CFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 
 ifdef I5_VERSION
@@ -118,9 +117,9 @@ ifeq (,$(findstring xlclang++,$(notdir $(CXX))))
   CXXFLAGS += -q mbcs -qinfo=pro
 else
   # xlclang++ options
-  CXXFLAGS += -qxlcompatmacros -fno-rtti -fno-exceptions
+  CXXFLAGS += -fno-rtti -fno-exceptions
 endif
-CXXFLAGS += -qlanglvl=extended0x -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108 -qstackprotect
+CXXFLAGS += -std=c++11 -qarch=ppc -fno-strict-aliasing -fstack-protector
 CXXFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 CPPFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 
@@ -143,7 +142,7 @@ endif
 UMA_SYS_LINK_PATH := -L/usr/lib/threads
 
 ifeq ($(j9vm_env_data64),1)
-  UMA_DLL_LINK_FLAGS += -q64
+  UMA_DLL_LINK_FLAGS += -m64
 else
   UMA_DLL_LINK_FLAGS += -q32
 endif
@@ -178,7 +177,5 @@ $(patsubst %.s,%.o,$(filter %.s,$(UMA_FILES_TO_PREPROCESS))) : %$(UMA_DOT_O) : %
 
 ifdef UMA_TREAT_WARNINGS_AS_ERRORS
   ifndef UMA_SUPPRESS_WARNINGS_AS_ERRORS
-    CFLAGS += -qhalt=w
-    CXXFLAGS += -qhalt=w
   endif
 endif

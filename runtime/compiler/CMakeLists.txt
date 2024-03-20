@@ -284,7 +284,7 @@ elseif(OMR_OS_AIX)
 		-DSUPPORTS_THREAD_LOCAL
 	)
 	if(OMR_ENV_DATA64)
-		list(APPEND J9_SHAREDFLAGS -q64)
+		list(APPEND J9_SHAREDFLAGS -m64)
 		if(OMR_TOOLCONFIG STREQUAL "xlc")
 			# Modify the arch tuning value we inherit from OMR.
 			list(REMOVE_ITEM TR_COMPILE_OPTIONS "-qarch=pwr7")
@@ -292,7 +292,7 @@ elseif(OMR_OS_AIX)
 
 			if(CMAKE_C_COMPILER_IS_XLCLANG)
 				# xlclang/xlclang++ options
-				list(APPEND SPP_FLAGS -qlanglvl=extc99)
+				list(APPEND SPP_FLAGS -std=extc99)
 				set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lc++")
 			endif()
 		endif()
