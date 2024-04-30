@@ -275,16 +275,28 @@ public final void wait(long time) throws InterruptedException {
  */
 public final void wait(long time, int frac) throws InterruptedException {
 /*[IF JAVA_SPEC_VERSION >= 19]*/
+  Thread currentThread = Thread.currentThread();
 /*[IF JAVA_SPEC_VERSION >= 23]*/
+  if (!currentThread.isVirtual()) {
+    waitImpl(time, frac);
+  } else {
 	boolean blockerRC = Blocker.begin();
 /*[ELSE] JAVA_SPEC_VERSION >= 23 */
 	long blockerRC = Blocker.begin();
 /*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 	try {
 		waitImpl(time, frac);
+	} catch (InterruptedException e) {
+	  /*[IF JAVA_SPEC_VERSION < 23]*/
+	  if (currentThread.isVirtual())
+	  /*[ENDIF] JAVA_SPEC_VERSION < 23 */
+		  currentThread.getAndClearInterrupt();
 	} finally {
 		Blocker.end(blockerRC);
 	}
+/*[IF JAVA_SPEC_VERSION >= 23]*/
+  }
+/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 /*[ELSE] JAVA_SPEC_VERSION >= 19 */
 	waitImpl(time, frac);
 /*[ENDIF] JAVA_SPEC_VERSION >= 19 */
