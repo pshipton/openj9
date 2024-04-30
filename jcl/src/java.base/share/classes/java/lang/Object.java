@@ -286,11 +286,6 @@ public final void wait(long time, int frac) throws InterruptedException {
 /*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 	try {
 		waitImpl(time, frac);
-	} catch (InterruptedException e) {
-	  /*[IF JAVA_SPEC_VERSION < 23]*/
-	  if (currentThread.isVirtual())
-	  /*[ENDIF] JAVA_SPEC_VERSION < 23 */
-		  currentThread.getAndClearInterrupt();
 	} finally {
 		Blocker.end(blockerRC);
 	}
