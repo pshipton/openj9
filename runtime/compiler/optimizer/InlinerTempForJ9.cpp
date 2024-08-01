@@ -998,7 +998,7 @@ TR_J9InlinerPolicy::genCodeForUnsafeGetPut(TR::Node* unsafeAddress,
 
    if (typeTestsNeeded && arrayBlockNeeded) // CASE (1)
       {
-      directAccessBlock = beforeCallBlock->getNextBlock();
+      indirectAccessBlock = beforeCallBlock->getNextBlock();
 
       if (directAccessWithConversionTreeTop)
          {
@@ -1036,7 +1036,7 @@ TR_J9InlinerPolicy::genCodeForUnsafeGetPut(TR::Node* unsafeAddress,
       indirectAccessBlock->append(indirectAccessTreeTop);
       indirectAccessBlock->append(
             TR::TreeTop::create(comp(),
-                                TR::Node::create(indirectAccessTreeTop->getNode(),
+                                TR::Node::create(directAccessTreeTop->getNode(),
                                                  TR::Goto, 0, joinBlock->getEntry())));
 
       arrayDirectAccessBlock->getExit()->insertTreeTopsAfterMe(indirectAccessBlock->getEntry(),
