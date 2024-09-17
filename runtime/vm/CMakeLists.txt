@@ -59,6 +59,7 @@ elseif(OMR_OS_ZOS)
 		-O2
 		"\"-Wc,TBYDBG(-qdebug=MRABIG)\""
 		"\"-Wc,TBYDBG(-qdebug=lincomm:ptranl:tfbagg)\""
+		"\"-Wc,FEDBG(-qxflag=InlineDespiteVolatileInArgs)\""
 	)
 endif()
 

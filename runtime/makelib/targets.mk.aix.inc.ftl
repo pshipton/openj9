@@ -55,7 +55,11 @@ endif
 ifeq ($(j9vm_env_data64),1)
   UMA_ASPP_DEBUG += -g
   UMA_LIB_LINKER_FLAGS += -X64
-  UMA_CC_MODE += -m64
+  ifeq ($(OMR_ENV_OPENXL),1)
+    UMA_CC_MODE += -m64
+  else
+    UMA_CC_MODE += -q64
+  endif
 else
   UMA_ASPP_DEBUG += $(VMASMDEBUG)
   UMA_LIB_LINKER_FLAGS += -X32
@@ -98,12 +102,20 @@ else
 endif
 
 ifeq (,$(findstring xlclang,$(notdir $(CC))))
-  # xlc options
-  CFLAGS += -q mbcs -qinfo=pro
+  ifeq (,$(findstring ibm-clang,$(notdir $(CC))))
+    # xlc options
+    CFLAGS += -q mbcs -qinfo=pro
+  endif
 else
- # xlclang options
+  # xlclang options
+  CFLAGS += -qxlcompatmacros
 endif
-CFLAGS += -std=c89 -qarch=ppc -fno-strict-aliasing -fstack-protector
+ifeq (,$(findstring ibm-clang,$(notdir $(CC))))
+  CFLAGS += -qlanglvl=extended -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108 -qstackprotect
+else
+  #openxl options
+  CFLAGS += -std=c89 -qarch=ppc -fno-strict-aliasing -fstack-protector
+endif
 CFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 
 ifdef I5_VERSION
@@ -113,13 +125,23 @@ else
 endif
 
 ifeq (,$(findstring xlclang++,$(notdir $(CXX))))
-  # xlc++ options
-  CXXFLAGS += -q mbcs -qinfo=pro
+  ifeq (,$(findstring ibm-clang,$(notdir $(CXX))))
+    # xlc++ options
+    CXXFLAGS += -q mbcs -qinfo=pro
+  else
+    # openxl options
+    CXXFLAGS += -fno-rtti -fno-exceptions
+  endif
 else
   # xlclang++ options
-  CXXFLAGS += -fno-rtti -fno-exceptions
+  CXXFLAGS += -qxlcompatmacros -fno-rtti -fno-exceptions
 endif
-CXXFLAGS += -std=c++11 -qarch=ppc -fno-strict-aliasing -fstack-protector
+ifeq (,$(findstring ibm-clang,$(notdir $(CXX))))
+  CXXFLAGS += -qlanglvl=extended0x -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108 -qstackprotect
+else
+  # openxl options
+  CXXFLAGS += -std=c++11 -qarch=ppc -fno-strict-aliasing -fstack-protector
+endif
 CXXFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 CPPFLAGS += -D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 
@@ -142,7 +164,11 @@ endif
 UMA_SYS_LINK_PATH := -L/usr/lib/threads
 
 ifeq ($(j9vm_env_data64),1)
-  UMA_DLL_LINK_FLAGS += -m64
+  ifeq ($(OMR_ENV_OPENXL),1)
+    UMA_DLL_LINK_FLAGS += -m64
+  else
+    UMA_DLL_LINK_FLAGS += -q64
+  endif
 else
   UMA_DLL_LINK_FLAGS += -q32
 endif
@@ -177,5 +203,9 @@ $(patsubst %.s,%.o,$(filter %.s,$(UMA_FILES_TO_PREPROCESS))) : %$(UMA_DOT_O) : %
 
 ifdef UMA_TREAT_WARNINGS_AS_ERRORS
   ifndef UMA_SUPPRESS_WARNINGS_AS_ERRORS
+    ifneq ($(OMR_ENV_OPENXL),1)
+      CFLAGS += -qhalt=w
+      CXXFLAGS += -qhalt=w
+    endif
   endif
 endif

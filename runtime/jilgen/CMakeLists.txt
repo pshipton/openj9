@@ -30,13 +30,22 @@ j9vm_add_executable(constgen
 	jilconsts.c
 )
 
-target_link_libraries(constgen
+if(DEFINED OMR_OS_AIX AND DEFINED CMAKE_C_COMPILER_IS_OPENXL)
+	target_link_libraries(constgen
+		PRIVATE
+			j9vm_interface
+			omrport
+			j9thr
+			j9util
+	)
+else()
+	target_link_libraries(constgen
 	PRIVATE
 		j9vm_interface
 		omrport
 		j9thr
-		j9util
-)
+	)
+endif()
 
 # Add command and target to generate jilconsts.inc/jilvalues.m4 via the constgen program.
 
