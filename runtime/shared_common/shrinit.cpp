@@ -4283,8 +4283,6 @@ j9shr_shutdown(J9JavaVM *vm)
 		J9SharedStringFarm* jclStringFarm = config->jclStringFarm;
 		J9HashTable* urlHashTable = config->jclURLHashTable;
 		J9HashTable* utfHashTable = config->jclUTF8HashTable;
-		J9HashTable *romToRamHashTable = config->romToRamHashTable;
-		omrthread_rwmutex_t romToRamHashTableMutex = config->romToRamHashTableMutex;
 		J9VMThread* currentThread = vm->internalVMFunctions->currentVMThread(vm);
 
 		/* Free all of the cached ClasspathItems */
@@ -4302,6 +4300,20 @@ j9shr_shutdown(J9JavaVM *vm)
 		}
 		if (config->jclCacheMutex) {
 			omrthread_monitor_destroy(config->jclCacheMutex);
+		}
+
+		J9HashTable *romToRamHashTable = config->romToRamHashTable;
+		if (0 != compareAndSwapUDATA(
+			(uintptr_t *)&config->romToRamHashTable,
+			(uintptr_t)romToRamHashTable,
+			(uintptr_t)0)
+		) {
+			omrthread_rwmutex_t romToRamHashTableMutex = config->romToRamHashTableMutex;
+			config->romToRamHashTableMutex = NULL;
+			omrthread_rwmutex_enter_write(romToRamHashTableMutex);
+			hashTableFree(romToRamHashTable);
+			omrthread_rwmutex_exit_write(romToRamHashTableMutex);
+			omrthread_rwmutex_destroy(romToRamHashTableMutex);
 		}
 		j9mem_free_memory(config->sharedAPIObject);
 		j9mem_free_memory(config);
@@ -4328,16 +4340,6 @@ j9shr_shutdown(J9JavaVM *vm)
 		}
 		if (utfHashTable) {
 			hashTableFree(utfHashTable);
-		}
-		if (NULL != romToRamHashTable) {
-			omrthread_rwmutex_enter_write(romToRamHashTableMutex);
-			config->romToRamHashTable = NULL;
-			config->romToRamHashTableMutex = NULL;
-			if (romToRamHashTable) {
-				hashTableFree(romToRamHashTable);
-			}
-			omrthread_rwmutex_exit_write(romToRamHashTableMutex);
-			omrthread_rwmutex_destroy(romToRamHashTableMutex);
 		}
 
 		/* Kill the string farm */
