@@ -21,8 +21,8 @@
 Executable=jcl_nio
 DATFileName=JCLTraceFormat.dat
 
-TraceEvent=Trc_nio_ch_Net_connect4 Noenv Overhead=1 Level=3 Template="nio_ch_Net_Connect(descriptor=%d, connect_to(AF_INET: addr=%s port=%d), length=%d)"
-TraceEvent=Trc_nio_ch_Net_connect6 Noenv Overhead=1 Level=3 Template="nio_ch_Net_Connect(descriptor=%d, connect_to(AF_INET6: addr=%s port=%d scope_id=%d), length=%d)"
+TraceEvent=Trc_nio_ch_Net_connect4 Noenv Overhead=1 Level=3 Template="nio_ch_Net_Connect(descriptor=%lld, connect_to(AF_INET: addr=%s port=%d), length=%d)"
+TraceEvent=Trc_nio_ch_Net_connect6 Noenv Overhead=1 Level=3 Template="nio_ch_Net_Connect(descriptor=%lld, connect_to(AF_INET6: addr=%s port=%d scope_id=%d), length=%d)"
 TraceEvent=Trc_nio_ch_UnixDomainSockets_connect Noenv Overhead=1 Level=3 Template="nio_ch_UnixDomainSockets_Connect(descriptor=%d, connect_to(AF_UNIX: pname=%s), length=%d)"
 TraceEvent=Trc_nio_ch_UnixDispatcher_close Noenv Overhead=1 Level=3 Template="nio_ch_UnixDispatcher_close(descriptor=%d)"
 TraceEvent=Trc_nio_ch_SocketDispatcher_close Noenv Overhead=1 Level=3 Template="nio_ch_SocketDispatcher_close(descriptor=%d)"
