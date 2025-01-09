@@ -21,9 +21,9 @@
 Executable=jcl_io
 DATFileName=JCLTraceFormat.dat
 
-TraceEntry=Trc_io_fileDescriptorClose_Entry Noenv Overhead=1 Level=3 Template="io_fileDescriptorClose(handle=%lld)"
+TraceEntry=Trc_io_fileDescriptorClose Noenv Overhead=1 Level=3 Template="io_fileDescriptorClose(handle=%lld)"
 TraceExit=Trc_io_fileDescriptorClose_Exit1 Noenv Overhead=1 Level=3 Template="io_fileDescriptorClose - error=%d"
 TraceExit=Trc_io_fileDescriptorClose_Exit2 Noenv Overhead=1 Level=3 Template="io_fileDescriptorClose success"
-TraceEntry=Trc_io_handleOpen_Entry Noenv Overhead=1 Level=3 Test Template="io_handleOpen(filename=%s, access=%u, sharing=%u, creation=%u, attributes=%u)"
+TraceEntry=Trc_io_handleOpen Noenv Overhead=1 Level=3 Test Template="io_handleOpen(filename=%s, access=%u, sharing=%u, creation=%u, attributes=%u)"
 TraceExit=Trc_io_handleOpen_Exit1 Noenv Overhead=1 Level=3 Template="io_handleOpen - error=%d"
 TraceExit=Trc_io_handleOpen_Exit2 Noenv Overhead=1 Level=3 Template="io_handleOpen - handle=%lld"
