@@ -25,3 +25,4 @@ TraceEvent=Trc_io_fileDescriptorClose Noenv Overhead=1 Level=3 Template="io_file
 TraceEvent=Trc_io_fileDescriptorClose_err Noenv Overhead=1 Level=3 Template="io_fileDescriptorClose_err(handle=%lld, error=%d)"
 TraceEvent=Trc_io_handleOpen Noenv Overhead=1 Level=3 Test Template="io_handleOpen(filename=%s, access=%u, sharing=%u, creation=%u, attributes=%u, handle=%lld)"
 TraceEvent=Trc_io_handleOpen_err Noenv Overhead=1 Level=3 Test Template="io_handleOpen_err(filename=%s, access=%u, sharing=%u, creation=%u, attributes=%u, error=%d)"
+TraceEvent=Trc_io_UnixFileSystem_createFileExclusively_close Noenv Overhead=1 Level=3 Template="io_createFileExclusively_close(handle=%d)"
