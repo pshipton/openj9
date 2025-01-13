@@ -24,6 +24,7 @@ DATFileName=JCLTraceFormat.dat
 TraceEvent=Trc_NET_Connect4 Noenv Overhead=1 Level=3 Template="NET_Connect(descriptor=%d, connect_to(AF_INET: addr=%s port=%d), length=%d)"
 TraceEvent=Trc_NET_Connect6 Noenv Overhead=1 Level=3 Template="NET_Connect(descriptor=%d, connect_to(AF_INET6: addr=%s port=%d scope_id=%d), length=%d)"
 TraceEvent=Trc_NET_SocketClose Noenv Overhead=1 Level=3 Template="NET_SocketClose(descriptor=%d)"
-TraceEvent=Trc_PlainSocketImpl_socketConnect4 Noenv Overhead=1 Level=3 Template="PlainSocketImpl_socketConnect4(descriptor=%d, connect_to(AF_INET: addr=%s port=%d), length=%d)"
-TraceEvent=Trc_PlainSocketImpl_socketConnect6 Noenv Overhead=1 Level=3 Template="PlainSocketImpl_socketConnect6(descriptor=%d, connect_to(AF_INET6: addr=%s port=%d scope_id=%d), length=%d)"
+TraceEvent=Trc_PlainSocketImpl_socketConnect4 Noenv Overhead=1 Level=3 Template="PlainSocketImpl_socketConnect(%sdescriptor=%d, connect_to(AF_INET: addr=%s port=%d), length=%d)"
+TraceEvent=Trc_PlainSocketImpl_socketConnect6 Noenv Overhead=1 Level=3 Template="PlainSocketImpl_socketConnect(%sdescriptor=%d, connect_to(AF_INET6: addr=%s port=%d scope_id=%d), length=%d)"
+TraceEvent=Trc_PlainSocketImpl_socketClose Noenv Overhead=1 Level=3 Template="PlainSocketImpl_socketClose(%sdescriptor=%d)"
 
