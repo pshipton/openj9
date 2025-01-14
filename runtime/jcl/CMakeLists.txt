@@ -23,7 +23,7 @@
 set(J9VM_JCL_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_tracegen(j9jcl.tdf)
-add_tracegen(jcl_io.tdf)
+add_tracegen(jcl_java.tdf)
 add_tracegen(jcl_net.tdf)
 add_tracegen(jcl_nio.tdf)
 
