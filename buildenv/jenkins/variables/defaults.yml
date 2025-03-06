@@ -282,8 +282,18 @@ ppc64_aix:
     24: '--disable-warnings-as-errors'
     next: '--disable-warnings-as-errors'
   build_env:
+    cmd:
+      24: 'unset LIBPATH && env'
     vars:
-      all: 'PATH+XLC=/opt/IBM/xlC/16.1.0/bin:/opt/IBM/xlc/16.1.0/bin CC=xlclang CXX=xlclang++'
+      8: 'PATH+XLC=/opt/IBM/xlC/16.1.0/bin:/opt/IBM/xlc/16.1.0/bin CC=xlclang CXX=xlclang++'
+      11: 'PATH+XLC=/opt/IBM/xlC/16.1.0/bin:/opt/IBM/xlc/16.1.0/bin CC=xlclang CXX=xlclang++'
+      17: 'PATH+XLC=/opt/IBM/xlC/16.1.0/bin:/opt/IBM/xlc/16.1.0/bin CC=xlclang CXX=xlclang++'
+      21: 'PATH+XLC=/opt/IBM/xlC/16.1.0/bin:/opt/IBM/xlc/16.1.0/bin CC=xlclang CXX=xlclang++'
+      24: 'PATH+OPENXL=/opt/IBM/openxlC/opt/IBM/openxlC/17.1.3/bin:/opt/IBM/openxlC/opt/IBM/openxlC/17.1.3/tools CC=ibm-clang_r CXX=ibm-clang++_r'
+      next: 'PATH+OPENXL=/opt/IBM/openxlC/opt/IBM/openxlC/17.1.3/bin:/opt/IBM/openxlC/opt/IBM/openxlC/17.1.3/tools CC=ibm-clang_r CXX=ibm-clang++_r'
+  extra_test_labels:
+    24: '!sw.os.aix.7_1'
+    next: '!sw.os.aix.7_1'
 #========================================#
 # Linux x86 64bits
 #========================================#
