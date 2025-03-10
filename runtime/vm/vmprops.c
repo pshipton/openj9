@@ -1850,11 +1850,11 @@ getPlatformPropertyList(JNIEnv *env, const char *strings[], int propIndex)
 		propIndex += 1;
 	}
 
-#if JAVA_SPEC_VERSION < 17
+#if (JAVA_SPEC_VERSION < 17) || defined(OSX)
 	/* Get the Temp Dir name */
 	strings[propIndex++] = "java.io.tmpdir";
 	strings[propIndex++] = getTmpDir(env, &envSpace);
-#endif /* JAVA_SPEC_VERSION < 17 */
+#endif /* (JAVA_SPEC_VERSION < 17) || defined(OSX) */
 
 	if (JAVA_SPEC_VERSION < 12) {
 		/* Get the timezone */
