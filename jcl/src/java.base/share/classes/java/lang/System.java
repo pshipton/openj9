@@ -1276,15 +1276,8 @@ static void checkTmpDir() {
 	/*[IF JAVA_SPEC_VERSION >= 20]*/
 	String tmpDir = internalGetProperties().getProperty("java.io.tmpdir"); //$NON-NLS-1$
 	if (!defaultTmpDir.equals(tmpDir)) {
-		try {
-			Field systemProps = SystemProps.class.getDeclaredField("customTmpdir"); //$NON-NLS-1$
-			systemProps.setAccessible(true);
-			systemProps.set(null, tmpDir);
-			if (SystemProps.isBadIoTmpdir()) {
-				System.err.println("WARNING: java.io.tmpdir directory does not exist"); //$NON-NLS-1$
-			}
-		} catch (IllegalAccessException | NoSuchFieldException e) {
-			throw new InternalError(e);
+		if (SystemProps.isBadIoTmpdir()) {
+			System.err.println("WARNING: java.io.tmpdir directory does not exist"); //$NON-NLS-1$
 		}
 	}
 	/*[ENDIF] JAVA_SPEC_VERSION >= 20 */
