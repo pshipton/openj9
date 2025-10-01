@@ -508,11 +508,15 @@ boolean casAnnotationType(AnnotationType oldType, AnnotationType newType) {
 		localTypeOffset = getUnsafe().objectFieldOffset(field);
 		AnnotationVars.annotationTypeOffset = localTypeOffset;
 	}
-/*[IF JAVA_SPEC_VERSION >= 9]*/
+	/*[IF JAVA_SPEC_VERSION >= 9]*/
+	/*[IF JAVA_SPEC_VERSION >= 23]*/
+	return getUnsafe().compareAndSetReference(localAnnotationVars, localTypeOffset, oldType, newType);
+	/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 	return getUnsafe().compareAndSetObject(localAnnotationVars, localTypeOffset, oldType, newType);
-/*[ELSE] JAVA_SPEC_VERSION >= 9 */
+	/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
+	/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 	return getUnsafe().compareAndSwapObject(localAnnotationVars, localTypeOffset, oldType, newType);
-/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
+	/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
 }
 
 /**
@@ -3584,8 +3588,12 @@ AnnotationVars getAnnotationVars() {
 			if (annotationVars == null) {
 				// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 				// and flushed to memory before assigning to the annotationVars field.
-				/*[IF JAVA_SPEC_VERSION >= 9]
+				/*[IF JAVA_SPEC_VERSION >= 9]*/
+				/*[IF JAVA_SPEC_VERSION >= 23]*/
+				getUnsafe().putReferenceRelease(this, annotationVarsOffset, tempAnnotationVars);
+				/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 				getUnsafe().putObjectRelease(this, annotationVarsOffset, tempAnnotationVars);
+				/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 				/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 				getUnsafe().putOrderedObject(this, annotationVarsOffset, tempAnnotationVars);
 				/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -3618,8 +3626,12 @@ private MethodHandle getValueMethod(final Class<? extends Annotation> containedT
 						long implLookupOffset = getUnsafe().staticFieldOffset(implLookupField);
 						// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 						// and flushed to memory before assigning to the implLookup field.
-						/*[IF JAVA_SPEC_VERSION >= 9]
+						/*[IF JAVA_SPEC_VERSION >= 9]*/
+						/*[IF JAVA_SPEC_VERSION >= 23]*/
+						getUnsafe().putReferenceRelease(Class.class, implLookupOffset, localImplLookup);
+						/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 						getUnsafe().putObjectRelease(Class.class, implLookupOffset, localImplLookup);
+						/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 						/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 						getUnsafe().putOrderedObject(Class.class, implLookupOffset, localImplLookup);
 						/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -3631,8 +3643,12 @@ private MethodHandle getValueMethod(final Class<? extends Annotation> containedT
 					}
 					// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 					// and flushed to memory before assigning to the valueMethod field.
-					/*[IF JAVA_SPEC_VERSION >= 9]
+					/*[IF JAVA_SPEC_VERSION >= 9]*/
+					/*[IF JAVA_SPEC_VERSION >= 23]*/
+					getUnsafe().putReferenceRelease(localAnnotationVars, AnnotationVars.valueMethodOffset, handle);
+					/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 					getUnsafe().putObjectRelease(localAnnotationVars, AnnotationVars.valueMethodOffset, handle);
+					/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 					/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 					getUnsafe().putOrderedObject(localAnnotationVars, AnnotationVars.valueMethodOffset, handle);
 					/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -3700,8 +3716,12 @@ private String cacheCanonicalName(String canonicalName) {
  * field specified by the {@code fieldOffset} of the {@code target} object
  */
 private static void writeFieldValue(Object target, long fieldOffset, Object fieldValue) {
-	/*[IF JAVA_SPEC_VERSION >= 11]
+	/*[IF JAVA_SPEC_VERSION >= 11]*/
+	/*[IF JAVA_SPEC_VERSION >= 23]*/
+	getUnsafe().putReferenceRelease(target, fieldOffset, fieldValue);
+	/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 	getUnsafe().putObjectRelease(target, fieldOffset, fieldValue);
+	/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 	/*[ELSE] JAVA_SPEC_VERSION >= 11 */
 	getUnsafe().putOrderedObject(target, fieldOffset, fieldValue);
 	/*[ENDIF] JAVA_SPEC_VERSION >= 11 */
@@ -3835,7 +3855,11 @@ private AnnotationCache getAnnotationCache() {
 		// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 		// and flushed to memory before assigning to the annotationCache field.
 		/*[IF JAVA_SPEC_VERSION >= 9]*/
+		/*[IF JAVA_SPEC_VERSION >= 23]*/
+		getUnsafe().putReferenceRelease(this, localAnnotationCacheOffset, annotationCacheResult);
+		/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 		getUnsafe().putObjectRelease(this, localAnnotationCacheOffset, annotationCacheResult);
+		/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 		/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 		getUnsafe().putOrderedObject(this, localAnnotationCacheOffset, annotationCacheResult);
 		/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -3944,8 +3968,12 @@ private EnumVars<T> getEnumVars() {
 		tempEnumVars = new EnumVars<>();
 		// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 		// and flushed to memory before assigning to the enumVars field.
-		/*[IF JAVA_SPEC_VERSION >= 9]
+		/*[IF JAVA_SPEC_VERSION >= 9]*/
+		/*[IF JAVA_SPEC_VERSION >= 23]*/
+		getUnsafe().putReferenceRelease(this, localEnumVarsOffset, tempEnumVars);
+		/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 		getUnsafe().putObjectRelease(this, localEnumVarsOffset, tempEnumVars);
+		/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 		/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 		getUnsafe().putOrderedObject(this, localEnumVarsOffset, tempEnumVars);
 		/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -3993,8 +4021,12 @@ Map<String, T> enumConstantDirectory() {
 		}
 		// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 		// and flushed to memory before assigning to the cachedEnumConstantDirectory field.
-		/*[IF JAVA_SPEC_VERSION >= 9]
+		/*[IF JAVA_SPEC_VERSION >= 9]*/
+		/*[IF JAVA_SPEC_VERSION >= 23]*/
+		getUnsafe().putReferenceRelease(localEnumVars, EnumVars.enumDirOffset, map);
+		/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 		getUnsafe().putObjectRelease(localEnumVars, EnumVars.enumDirOffset, map);
+		/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 		/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 		getUnsafe().putOrderedObject(localEnumVars, EnumVars.enumDirOffset, map);
 		/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -4052,8 +4084,12 @@ T[] getEnumConstantsShared() {
 			}
 			// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 			// and flushed to memory before assigning to the cachedEnumConstants field.
-			/*[IF JAVA_SPEC_VERSION >= 9]
+			/*[IF JAVA_SPEC_VERSION >= 9]*/
+			/*[IF JAVA_SPEC_VERSION >= 23]*/
+			getUnsafe().putReferenceRelease(localEnumVars, localEnumConstantsOffset, enums);
+			/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 			getUnsafe().putObjectRelease(localEnumVars, localEnumConstantsOffset, enums);
+			/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 			/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 			getUnsafe().putOrderedObject(localEnumVars, localEnumConstantsOffset, enums);
 			/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -5066,15 +5102,23 @@ private ReflectCache acquireReflectCache() {
 		ReflectCache newCache = new ReflectCache(this);
 		do {
 			// Some thread will insert this new cache making it available to all.
-/*[IF JAVA_SPEC_VERSION >= 9]*/
+			/*[IF JAVA_SPEC_VERSION >= 9]*/
+			/*[IF JAVA_SPEC_VERSION >= 23]*/
+			if (theUnsafe.compareAndSetReference(this, cacheOffset, null, newCache)) {
+			/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 			if (theUnsafe.compareAndSetObject(this, cacheOffset, null, newCache)) {
-/*[ELSE] JAVA_SPEC_VERSION >= 9
+			/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
+			/*[ELSE] JAVA_SPEC_VERSION >= 9
 			if (theUnsafe.compareAndSwapObject(this, cacheOffset, null, newCache)) {
-/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
+			/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
 				cache = newCache;
 				break;
 			}
+			/*[IF JAVA_SPEC_VERSION >= 23]*/
+			cache = (ReflectCache) theUnsafe.getReference(this, cacheOffset);
+			/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 			cache = (ReflectCache) theUnsafe.getObject(this, cacheOffset);
+			/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 		} while (cache == null);
 	}
 	return cache.acquire();
@@ -5098,8 +5142,12 @@ private static long getReflectCacheOffset() {
 void setReflectCache(ReflectCache cache) {
 	// Lazy initialization of a non-volatile field. Ensure the Object is initialized
 	// and flushed to memory before assigning to the annotationCache field.
-	/*[IF JAVA_SPEC_VERSION >= 9]
+	/*[IF JAVA_SPEC_VERSION >= 9]*/
+	/*[IF JAVA_SPEC_VERSION >= 23]*/
+	getUnsafe().putReferenceRelease(this, getReflectCacheOffset(), cache);
+	/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 	getUnsafe().putObjectRelease(this, getReflectCacheOffset(), cache);
+	/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 	/*[ELSE] JAVA_SPEC_VERSION >= 9 */
 	getUnsafe().putOrderedObject(this, getReflectCacheOffset(), cache);
 	/*[ENDIF] JAVA_SPEC_VERSION >= 9 */
@@ -6040,7 +6088,11 @@ public Class<?>[] getNestMembers()
 				localPermittedSubclassesCacheOffset = getUnsafe().objectFieldOffset(Class.class, "cachedPermittedSubclasses");
 				cachedPermittedSubclassesOffset = localPermittedSubclassesCacheOffset;
 			}
+			/*[IF JAVA_SPEC_VERSION >= 23]*/
+			getUnsafe().putReferenceRelease(this, localPermittedSubclassesCacheOffset, localPermittedSubclasses);
+			/*[ELSE] JAVA_SPEC_VERSION >= 23 */
 			getUnsafe().putObjectRelease(this, localPermittedSubclassesCacheOffset, localPermittedSubclasses);
+			/*[ENDIF] JAVA_SPEC_VERSION >= 23 */
 		}
 
 		/*[IF JAVA_SPEC_VERSION < 24]*/
