@@ -81,27 +81,6 @@ public class ProcessWaitFor extends TestCase {
 		}
 	}	
 	
-	class Stopper implements Runnable {
-		Thread threadToStop;
-		Object synchronizer;
-		
-		public Stopper(Thread threadToStop,Object synchronizer){
-			this.threadToStop = threadToStop;
-			this.synchronizer = synchronizer;
-		}
-
-
-		public void run(){
-			if (synchronizer != null){
-				synchronized(synchronizer){
-					threadToStop.stop();
-					return;
-				}
-			}
-			threadToStop.stop();
-		}
-	}
-	
 	/**
 	 * method that can be used to run the test by itself
 	 * 
@@ -260,30 +239,6 @@ public class ProcessWaitFor extends TestCase {
 			return;
 		} catch (InterruptedException e){
 			/* this is expected */
-		}
-		
-		doWaitFor();
-	}
-	
-	public void testWaitForAfterInterruptInSleepByStop(){
-		Thread interruptor = new TimerThread(new Stopper(Thread.currentThread(),null),1000);
-		interruptor.start();
-		
-		try{
-			Thread.sleep(5000);
-			/* in this case the test is invalid because of the timing just assume pass */
-			System.out.println("WaitForAfterInterruptInSleep - invalid, assuming pass");
-			return;
-		} catch (InterruptedException e){
-			System.out.println("WaitForAfterInterruptInSleep - invalid received InterruptedException, assuming pass");
-		} catch (ThreadDeath e){
-			/* this is expected */
-		}
-		
-		try {
-			interruptor.join();
-		} catch (InterruptedException e){
-			fail("Main thread interrupted during join");
 		}
 		
 		doWaitFor();
