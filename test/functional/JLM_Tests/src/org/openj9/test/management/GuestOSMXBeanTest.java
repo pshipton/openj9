@@ -297,14 +297,14 @@ public class GuestOSMXBeanTest {
 			} else if (mu.getMessage().contains(LPARCFG_MEM_UNSUPPORTED_ERROR)) {
 				/*
 				 * Validate the error condition i.e if the lparcfg version is
-				 * greater/equal to < 1.8 If version is < 1.8, ignore the error
-				 * else fail the test. If the version is >= 1.9 and there is
+				 * greater/equal to 1.8. If version is < 1.8 ignore the error
+				 * else fail the test. If the version is >= 1.8 and there is
 				 * no entitled_memory entry, ignore the error.
 				 */
 				File file = new File(LPARCFG_FILE);
 				try {
 					/*
-					 * Use a Scanner to scan through the /proc/ppc64/lparcfg.
+					 * Use a Scanner to scan through /proc/ppc64/lparcfg.
 					 */
 					Scanner scanner = new Scanner(file);
 					scanner.useDelimiter("=|\\p{javaWhitespace}+");
@@ -332,7 +332,7 @@ public class GuestOSMXBeanTest {
 					logger.warn("Cannot proceed with the test, the lparcfg has no entitled_memory");
 					return false;
 				} catch (FileNotFoundException e) {
-					Assert.fail("/proc/ppc64/lparcfg file not found.. Exiting.");
+					Assert.fail("/proc/ppc64/lparcfg file not found. Exiting.");
 				}
 			} else if (mu.getMessage().contains(NO_HYPERVISOR_ERROR)) {
 				logger.warn("Not running on a Hypervisor, Guest Statistics cannot be retrieved!");
@@ -379,7 +379,7 @@ public class GuestOSMXBeanTest {
 			cpuEnt = procUsage.getCpuEntitlement();
 
 			logger.debug("Guest Processor statistics received....");
-			if (osname.equals("z/OS") == true) {
+			if (osname.equals("z/OS")) {
 				logger.debug("The Host CPU Clock Speed	:" + hostSpeed + "MSU");
 			} else {
 				logger.debug("The Host CPU Clock Speed	:" + hostSpeed + "MHz");
@@ -411,7 +411,7 @@ public class GuestOSMXBeanTest {
 			if (pu.getMessage().contains(VMWARE_ERROR)) {
 				/*
 				 * Ignore the error for now until the hypervisor:NoGuestSDK tag
-				 * is added
+				 * is added.
 				 */
 				logger.warn("Cannot Proceed with the test, check for the VMWare Guest SDK");
 				return false;
@@ -440,7 +440,7 @@ public class GuestOSMXBeanTest {
 	{
 		logger.info("Starting Remote Server!");
 
-		ArrayList<String> argBuffer = new ArrayList();
+		ArrayList<String> argBuffer = new ArrayList<>();
 		char fs = File.separatorChar;
 
 		String javaExec = System.getProperty("java.home") + fs + "bin" + fs	+ "java";
