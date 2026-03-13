@@ -251,7 +251,7 @@ s390x_linux:
     build: 'ci.role.build && hw.arch.s390x && sw.os.rhel.7'
   build_env:
     cmd:
-      default: 'source /home/jenkins/set_gcc_11.2.0_env'
+      default: 'source /home/jenkins/set_gcc_14.2.0_env'
 #========================================#
 # Linux S390 64bits /w JITSERVER
 #========================================#
