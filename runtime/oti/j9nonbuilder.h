@@ -6153,8 +6153,6 @@ typedef struct JFRState {
 	jlong typeIDcount;
 	char *delay;
 	char *duration;
-	jclass jfrInternalEventClassRef;
-	jclass jfrEventClassRef;
 } JFRState;
 
 typedef struct J9ReflectFunctionTable {
