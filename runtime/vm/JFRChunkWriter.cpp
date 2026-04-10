@@ -27,12 +27,6 @@
 #include "JFRChunkWriter.hpp"
 #include "JFRConstantPoolTypes.hpp"
 
-#define J9VM_JFR_GC_DEBUG_DUMP 1
-
-#include <cstdio>
-#include <cstdint>
-#include <cstring>
-
 void
 VM_JFRChunkWriter::writeJFRHeader()
 {
@@ -836,52 +830,7 @@ VM_JFRChunkWriter::writeNarrowOOPModeTypesEvent()
 
 	/* write size */
 	writeEventSize(dataStart);
-}
 
-void
-VM_JFRChunkWriter::writeGCNameTypesEvent()
-{
-	U_8 *dataStart = writeCheckpointEventHeader(Generic, 1);
-
-	/* class ID */
-	_bufferWriter->writeLEB128(GCNamesID);
-
-	/* number of states */
-	_bufferWriter->writeLEB128(GCNameTypeCount);
-
-	for (int i = 0; i < GCNameTypeCount; i++) {
-		/* constant index */
-		_bufferWriter->writeLEB128(i);
-
-		/* write string */
-		writeStringLiteral(gcNames[i]);
-	}
-
-	/* write size */
-	writeEventSize(dataStart);
-}
-
-void
-VM_JFRChunkWriter::writeGCCauseTypesEvent()
-{
-	U_8 *dataStart = writeCheckpointEventHeader(Generic, 1);
-
-	/* class ID */
-	_bufferWriter->writeLEB128(GCCausesID);
-
-	/* number of states */
-	_bufferWriter->writeLEB128(GCCauseTypeCount);
-
-	for (int i = 0; i < GCCauseTypeCount; i++) {
-		/* constant index */
-		_bufferWriter->writeLEB128(i);
-
-		/* write string */
-		writeStringLiteral(gcCauses[i]);
-	}
-
-	/* write size */
-	writeEventSize(dataStart);
 }
 
 void
@@ -921,6 +870,7 @@ VM_JFRChunkWriter::writeGCHeapConfigurationEvent()
 
 	/* write event size */
 	writeEventSize(dataStart);
+
 }
 
 void
@@ -1555,7 +1505,8 @@ void
 VM_JFRChunkWriter::writeGarbageCollectionEvent(void *anElement, void *userData)
 {
 	GarbageCollectionEntry *entry = (GarbageCollectionEntry *)anElement;
-	VM_BufferWriter *bufferWriter = (VM_BufferWriter *)userData;
+	VM_JFRChunkWriter *writer = (VM_JFRChunkWriter *)userData;
+	VM_BufferWriter *bufferWriter = writer->_bufferWriter;
 
 	/* Reserve size field */
 	U_8 *dataStart = reserveEventSize(bufferWriter);
@@ -1573,10 +1524,10 @@ VM_JFRChunkWriter::writeGarbageCollectionEvent(void *anElement, void *userData)
 	bufferWriter->writeLEB128(entry->gcID);
 
 	/* Write name of this collection */
-	bufferWriter->writeLEB128(entry->gcNameID);
+	writer->writeStringLiteral(gcNames[entry->gcNameID]);
 
 	/* Write cause of this collection */
-	bufferWriter->writeLEB128(entry->gcCauseID);
+	writer->writeStringLiteral(gcCauses[entry->gcCauseID]);
 
 	/* Write sum of pauses during collection */
 	bufferWriter->writeLEB128(entry->sumOfPauses);

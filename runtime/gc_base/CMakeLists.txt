@@ -35,7 +35,6 @@ set(gc_base_sources
 	HotFieldUtil.cpp
 	IdleGCManager.cpp
 	IndexableObjectAllocationModel.cpp
-	GCJFR.cpp
 	modronapi.cpp
 	ObjectAccessBarrier.cpp
 	ObjectCheck.cpp
