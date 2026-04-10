@@ -68,26 +68,6 @@ enum OOPModeType {
 	OOPModeTypeCount,
 };
 
-enum GCNameType {
-	Default = 0,
-	Global,
-	Scavenge,
-	PartialGarbageCollect,
-	GlobalMarkPhase,
-	GlobalGarbageCollect,
-	Epsilon,
-	GCNameTypeCount,
-};
-
-enum GCCauseType {
-	Other = 0,
-	SystemGC,
-	AllocFailure,
-	AllocTaxation,
-	ConcurrentKickoff,
-	GCCauseTypeCount,
-};
-
 enum ThreadState {
 	NEW = 0,
 	TERMINATED,
@@ -331,10 +311,10 @@ struct GarbageCollectionEntry {
 	I_64 ticks;
 	I_64 duration;
 	UDATA gcID;
-	GCNameType gcNameID;
-	GCCauseType gcCauseID;
-	U_64 sumOfPauses;
-	U_64 longestPause;
+	U_32 gcNameID;
+	U_32 gcCauseID;
+	I_64 sumOfPauses;
+	I_64 longestPause;
 };
 
 struct VirtualSpaceEntry {
