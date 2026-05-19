@@ -27,3 +27,6 @@ TraceEvent=Trc_nio_ch_UnixDomainSockets_connect Noenv Overhead=1 Level=3 Templat
 TraceEvent=Trc_nio_ch_UnixDispatcher_close Noenv Overhead=1 Level=3 Template="nio_ch_UnixDispatcher_close(descriptor=%d)"
 TraceEvent=Trc_nio_ch_SocketDispatcher_close Noenv Overhead=1 Level=3 Template="nio_ch_SocketDispatcher_close(descriptor=%d)"
 TraceEvent=Trc_nio_ch_FileDispatcherImpl_close Noenv Overhead=1 Level=3 Template="nio_ch_FileDispatcherImpl_close(descriptor=%d)"
+
+TraceEvent=Trc_sun_nio_ch_EPoll_create Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_create(fd=%d)"
+TraceException=Trc_sun_nio_ch_EPoll_wait Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_wait(fd=%d, numfds=%d, rc=%d, errno=%d)"
