@@ -30,3 +30,5 @@ TraceEvent=Trc_nio_ch_FileDispatcherImpl_close Noenv Overhead=1 Level=3 Template
 
 TraceEvent=Trc_sun_nio_ch_EPoll_create Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_create(fd=%d)"
 TraceException=Trc_sun_nio_ch_EPoll_wait Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_wait(fd=%d, numfds=%d, rc=%d, errno=%d)"
+TraceException=Trc_sun_nio_ch_EPoll_waitPending1 Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_waitPending(fd=%d, numfds=%d)"
+TraceException=Trc_sun_nio_ch_EPoll_waitPending2 Noenv Overhead=1 Level=3 Template="sun_nio_ch_EPoll_waitPending(fd=%d, numfds=%d, rc=%d, errno=%d)"
